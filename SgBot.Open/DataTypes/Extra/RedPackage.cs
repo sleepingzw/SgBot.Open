@@ -52,7 +52,7 @@ namespace SgBot.Open.DataTypes.Extra
 
         public static PackageStatus GetPackage(string groupId, int whichPkg, string who)
         {
-
+            return PackageStatus.CouldNotFind;
         }
 
         

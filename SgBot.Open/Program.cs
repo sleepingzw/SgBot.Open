@@ -22,9 +22,11 @@ var init=Initializer.Initial();
 if(!init)
     return;
 var bot = Initializer.InitBot();
+var respond = new WebPicResponder();
 
 await bot.LaunchAsync();
 Initializer.StartQueueOut();
+
 Logger.Log($"登录Bot {StaticData.BotConfig.BotQQ} 成功",LogLevel.Important);
 // await MessageManager.SendFriendMessageAsync("2826241064", "test");
 bot.MessageReceived.OfType<GroupMessageReceiver>().Subscribe(receiver=>

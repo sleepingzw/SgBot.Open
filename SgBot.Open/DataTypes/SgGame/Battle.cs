@@ -22,16 +22,21 @@ namespace SgBot.Open.DataTypes.SgGame
             BattleUnit fastUnit;
             BattleUnit slowUnit;
 
+            string fname, sname;
             var isPlayerFast = true;
             if (player.BattleSpeed >= enemy.BattleSpeed)
             {
                 fastUnit = player;
+                fname = playerp.Name;
                 slowUnit = enemy;
+                sname = enemyp.Name;
             }
             else
             {
                 fastUnit = enemy;
+                sname = playerp.Name;
                 slowUnit = player;
+                fname = enemyp.Name;
                 isPlayerFast = false;
             }
             // Console.WriteLine(JsonConvert.SerializeObject(fastUnit,Formatting.Indented));
@@ -53,13 +58,24 @@ namespace SgBot.Open.DataTypes.SgGame
                 if (speedFlag >= 1) // 速度高的攻击
                 {
                     speedFlag--;
-                    foreach (var skill in fastUnit.Skills)
+                    var value = fastUnit.SkillActiveProbability - slowUnit.SkillActiveProbability;
+                    value += 40;
+                    if (value > 100)
                     {
-                        if (SkillLibrary.Skills.TryGetValue(skill, out var whatSkill))
-                        {
-                            fastUnit = whatSkill.ActiveSkill(fastUnit, ref slowUnit,1);
-                            skillActiveLog += $"{whatSkill.Name} 发动! {whatSkill.Description}";
-                        }
+                        value = 100;
+
+                    }
+                    if (value < 20)
+                    {
+                        value = 20;
+                    }
+                    Console.WriteLine(value);
+                    foreach (var skill in fastUnit.Skills.Where(skill => UsefulMethods.IsOk(100, (int)value)))
+                    {
+                        if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
+                        fastUnit = whatSkill.ActiveSkill(fastUnit, ref slowUnit, 1);
+                        skillActiveLog += $"{whatSkill.Name} 发动! {fname}{whatSkill.Action}";
+                        break;
                     }
 
                     var temp = slowUnit.CriticalProbabilityBattle - fastUnit.CriticalProbabilityBattle;
@@ -212,13 +228,23 @@ namespace SgBot.Open.DataTypes.SgGame
                 else // 速度低的攻击
                 {
                     speedFlag += speed;
-                    foreach (var skill in slowUnit.Skills)
+                    var value = slowUnit.SkillActiveProbability - fastUnit.SkillActiveProbability;
+                    value += 40;
+                    if (value > 100)
                     {
-                        if (SkillLibrary.Skills.TryGetValue(skill, out var whatSkill))
-                        {
-                            slowUnit = whatSkill.ActiveSkill(slowUnit, ref fastUnit,1);
-                            skillActiveLog += $"{whatSkill.Name} 发动! {whatSkill.Description}";
-                        }
+                        value = 100;
+
+                    }
+                    if (value < 20)
+                    {
+                        value = 20;
+                    }
+                    foreach (var skill in slowUnit.Skills.Where(skill => UsefulMethods.IsOk(100, (int)value)))
+                    {
+                        if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
+                        slowUnit = whatSkill.ActiveSkill(slowUnit, ref fastUnit, 1);
+                        skillActiveLog += $"{whatSkill.Name} 发动! {sname}{whatSkill.Description}";
+                        break;
                     }
 
                     var temp = fastUnit.CriticalProbabilityBattle - slowUnit.CriticalProbabilityBattle;

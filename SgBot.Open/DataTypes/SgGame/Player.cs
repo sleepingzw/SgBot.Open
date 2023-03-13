@@ -284,6 +284,7 @@ namespace SgBot.Open.DataTypes.SgGame
         A,
         AA,
         M,
-        GM
+        GM,
+        GOD
     }
 }

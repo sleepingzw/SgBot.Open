@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
+using SgBot.Open.Utils.Basic;
+using SlpzLibrary;
 
 namespace SgBot.Open.DataTypes.SgGame
 {
@@ -42,6 +45,7 @@ namespace SgBot.Open.DataTypes.SgGame
         public double SwiftOrigin;
         public double SwiftBattle;
 
+        public double SkillActiveProbability;
         public List<int> Skills;
 
         public BattleUnit(Player player)
@@ -74,6 +78,7 @@ namespace SgBot.Open.DataTypes.SgGame
             CriticalDamageOrigin = 1;
             SwiftOrigin = player.Agility * 1;
 
+            // Logger.Log(DataOperator.ToJsonString(this),LogLevel.Important);
             // 统一加算全部的装备属性
             double tempHpMaxBonus = 0,
                 tempSdMaxBonus = 0,
@@ -86,7 +91,8 @@ namespace SgBot.Open.DataTypes.SgGame
                 tempCritDmgOrgBonus = 0,
                 tempSftOrgBonus = 0;
             foreach (var equip in player.Bag.Where(equip => equip.OnBody))
-            {
+            { 
+                // Logger.Log(DataOperator.ToJsonString(equip),LogLevel.Important);
                 tempHpMaxBonus += equip.EquipmentEffect.MaxHpBonus;
                 tempSdMaxBonus += equip.EquipmentEffect.MaxShieldBonus;
                 tempSpeedBonus += equip.EquipmentEffect.SpeedBonus;
@@ -98,18 +104,17 @@ namespace SgBot.Open.DataTypes.SgGame
                 tempCritDmgOrgBonus += equip.EquipmentEffect.CriticalDamageBonus;
                 tempSftOrgBonus += equip.EquipmentEffect.SwiftBonus;
             }
-
             // 将加成应用到玩家身上
-            TempHpMax *= 1 + tempHpMaxBonus;
-            TempSdMax *= 1 + tempSdMaxBonus;
-            speedTemp *= 1 + tempSpeedBonus;
-            PhysicalAtkOrigin *= 1 + tempPhyAtkOrgBonus;
-            MagicAtkOrigin *= 1 + tempMagAtkOrgBonus;
-            PhysicalDefOrigin *= 1 + tempPhyDefOrgBonus;
-            MagicDefOrigin *= 1 + tempMagDefOrgBonus;
-            CriticalProbabilityOrigin *= 1 + tempCritProOrgBonus;
-            CriticalDamageOrigin *= 1 + tempCritDmgOrgBonus;
-            SwiftOrigin *= 1 + tempSftOrgBonus;
+            TempHpMax *= (1 + tempHpMaxBonus);
+            TempSdMax *= (1 + tempSdMaxBonus);
+            speedTemp *= (1 + tempSpeedBonus);
+            PhysicalAtkOrigin *= (1 + tempPhyAtkOrgBonus);
+            MagicAtkOrigin *= (1 + tempMagAtkOrgBonus);
+            PhysicalDefOrigin *= (1 + tempPhyDefOrgBonus);
+            MagicDefOrigin *= (1 + tempMagDefOrgBonus);
+            CriticalProbabilityOrigin *= (1 + tempCritProOrgBonus);
+            CriticalDamageOrigin *= (1 + tempCritDmgOrgBonus);
+            SwiftOrigin *= (1 + tempSftOrgBonus);
 
             SpeedOrigin = 10 + speedTemp;
             MaxHp = (long)TempHpMax;
@@ -121,6 +126,8 @@ namespace SgBot.Open.DataTypes.SgGame
             Refresh();
 
             Skills = player.SkillActive;
+            SkillActiveProbability = Math.Atan((double)player.Intelligence / 200) * 100;
+            // Logger.Log(DataOperator.ToJsonString(this),LogLevel.Important);
         }
 
         public void Refresh()

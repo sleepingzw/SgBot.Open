@@ -150,6 +150,7 @@ namespace SgBot.Open.Utils.Basic
         {
             var db = new DataBaseContext();
             var player = db.Players.Where(x => x.Rank == rank && x.Id != except).Random();
+            player.AnalyseString();
             return player;
         }
         /// <summary>

@@ -337,6 +337,14 @@ namespace SgBot.Open.Utils.Extra
                     TextSize = 20,
                     IsAntialias = true
                 };
+                using var skPurplePaint = new SKPaint
+                {
+                    Color = SKColors.Purple,
+                    TextEncoding = SKTextEncoding.Utf8,
+                    Typeface = skTypeface,
+                    TextSize = 20,
+                    IsAntialias = true
+                };
                 using var skBluePaint = new SKPaint
                 {
                     Color = SKColors.Blue,
@@ -373,7 +381,7 @@ namespace SgBot.Open.Utils.Extra
                     if (!detail.SkillAction.IsNullOrEmpty())
                     {
                         glCanvas.DrawText($"{detail.SkillAction}", 3f, 25 + 20 * lines,
-                            skBlackPaint);
+                            skPurplePaint);
                         lines++;
                     }
 
@@ -447,7 +455,7 @@ namespace SgBot.Open.Utils.Extra
 
                 if (log.IsWin)
                 {
-                    glCanvas.DrawText("您获胜了", 465f, 40 + 20 * lines,
+                    glCanvas.DrawText("您获胜了", 480f, 40 + 20 * lines,
                         skBigBlackPaint);
                     lines++;
                     glCanvas.DrawText(
@@ -462,7 +470,7 @@ namespace SgBot.Open.Utils.Extra
                 }
                 else
                 {
-                    glCanvas.DrawText("您落败了", 465f, 40 + 20 * lines,
+                    glCanvas.DrawText("您落败了", 480f, 40 + 20 * lines,
                         skBigBlackPaint);
                     lines++;
                     glCanvas.DrawText(

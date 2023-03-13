@@ -40,21 +40,29 @@ namespace SgBot.Open.Utils.Basic
         {
             while (true)
             {
-                if (GroupMessageReceiverQueue.TryDequeue(out var result))
+                try
                 {
-                    // 如果属于不可响应指令，不回答
-                    var groupReceiverInfo = await MessagePreOperator.GetGroupReceiverInfo(result);
-                    if (groupReceiverInfo.CanCommand)
+                    if (GroupMessageReceiverQueue.TryDequeue(out var result))
                     {
-                        var responded=await GroupMessageResponder.Respond(groupReceiverInfo, result);
-                        // 如果回复了，更新回复限制器
-                        if (responded)
+                        // 如果属于不可响应指令，不回答
+                        var groupReceiverInfo = await MessagePreOperator.GetGroupReceiverInfo(result);
+                        if (groupReceiverInfo.CanCommand)
                         {
-                            RespondLimiter.AddRespond(result.GroupId, DateTime.Now);
+                            var responded = await GroupMessageResponder.Respond(groupReceiverInfo, result);
+                            // 如果回复了，更新回复限制器
+                            if (responded)
+                            {
+                                RespondLimiter.AddRespond(result.GroupId, DateTime.Now);
+                            }
                         }
                     }
+
+                    Thread.Sleep(100);
                 }
-                Thread.Sleep(50);
+                catch (Exception ex)
+                {
+                    Logger.Log(ex.ToString(),LogLevel.Fatal);
+                }
             }
         }
         private static class RespondLimiter

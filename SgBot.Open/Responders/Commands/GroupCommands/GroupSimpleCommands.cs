@@ -14,7 +14,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                                            "傻狗Bot V0.3.1:\n总之就是修了bug\n加了随机延时\n加了些怪功能" +
                                            "傻狗Bot V0.3.2:\n傻狗大陆再开！公测" +
                                            "傻狗Bot V0.3.3:\n下载失败的图片会重新下载了\n增加了一些可能永远不会被发现的互动" +
-                                           "傻狗Bot V0.3.4:\n自动黑名单功能回归";
+                                           "傻狗Bot V0.3.4:\n自动黑名单功能回归" +
+                                           "傻狗Bot V0.4.0:\n优化消息处理队列";
 
         /// <summary>
         /// 查看bot的一些信息
@@ -26,7 +27,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task Info(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.0\n感谢Mirai,Mirai.NET");
+            await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1\n感谢Mirai,Mirai.NET");
         }
         /// <summary>
         /// 查看bot最近一个版本更新了什么
@@ -38,7 +39,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task UpdateInfo(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.0:\n优化消息处理队列");
+            await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1:\n修复了一些bug");
         }
         /// <summary>
         /// 呼唤bot

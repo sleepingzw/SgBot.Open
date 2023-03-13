@@ -112,11 +112,11 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             }
 
             var target = groupMessageReceivedInfo.AtMessages[0].Target;
-            if (target == StaticData.BotConfig.BotQQ)
-            {
-                await groupMessageReceiver.QuoteMessageAsync("你失败了");
-                return;
-            }
+            //if (target == StaticData.BotConfig.BotQQ)
+            //{
+            //    await groupMessageReceiver.QuoteMessageAsync("你失败了");
+            //    return;
+            //}
 
             var player = await DataBaseOperator.FindPlayer(groupMessageReceivedInfo.Member.UserId);
             player.Refresh();

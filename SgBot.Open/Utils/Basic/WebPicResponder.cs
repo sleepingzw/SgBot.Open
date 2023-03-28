@@ -10,18 +10,17 @@ namespace SgBot.Open.Utils.Basic
 {
     public class WebPicResponder
     {
-        private HttpListener _listener;
-        private const string port = "1145";//port
+        private const string Port = "1145";//port
 
         public WebPicResponder()
         {
-            _listener = new HttpListener();
-            _listener.Prefixes.Add("http://+:" + port + "/");
+            var listener = new HttpListener();
+            listener.Prefixes.Add("http://+:" + Port + "/");
 
-            _listener.Start();
-            _listener.BeginGetContext(new AsyncCallback(ListenerHandle), _listener);
+            listener.Start();
+            listener.BeginGetContext(ListenerHandle, listener);
         }
-        private void ListenerHandle(IAsyncResult result)
+        private static void ListenerHandle(IAsyncResult result)
         {
             try
             {
@@ -43,7 +42,7 @@ namespace SgBot.Open.Utils.Basic
             }
 
         }
-        private void GetPics(string url, HttpListenerResponse response, bool hasIfModifiedSince)
+        private static void GetPics(string url, HttpListenerResponse response, bool hasIfModifiedSince)
         {
             if (hasIfModifiedSince)
             {

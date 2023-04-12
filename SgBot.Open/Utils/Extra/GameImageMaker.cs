@@ -118,7 +118,7 @@ namespace SgBot.Open.Utils.Extra
                 }
 
                 var ret = Path.Combine(StaticData.ExePath!,
-                    $"Data\\Temp\\PlayerInfoTempImage\\{player.Id}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
+                    $"Data/Temp/PlayerInfoTempImage/{player.Id}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
                 using (var image = surface.Snapshot())
                 using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
                 using (var stream = File.OpenWrite(ret))
@@ -198,7 +198,7 @@ namespace SgBot.Open.Utils.Extra
                 }
 
                 var ret = Path.Combine(StaticData.ExePath!,
-                    $"Data\\Temp\\PlayerPveTempImage\\{player.Id}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
+                    $"Data/Temp/PlayerPveTempImage/{player.Id}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
                 using (var image = surface.Snapshot())
                 using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
                 using (var stream = File.OpenWrite(ret))
@@ -283,7 +283,7 @@ namespace SgBot.Open.Utils.Extra
                 }
                 glCanvas.DrawText("输入 /game.equip 编号来装备背包中的物品", 3f, 25 + lines * 20, skTextPaint);
                 var ret = Path.Combine(StaticData.ExePath!,
-                    $"Data\\Temp\\PlayerBagTempImage\\{player.Id}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
+                    $"Data/Temp/PlayerBagTempImage/{player.Id}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
                 using (var image = surface.Snapshot())
                 using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
                 using (var stream = File.OpenWrite(ret))
@@ -484,7 +484,7 @@ namespace SgBot.Open.Utils.Extra
                         skBlackPaint);
                 }
                 var ret = Path.Combine(StaticData.ExePath!,
-                    $"Data\\Temp\\PlayerBattleTempImage\\{playerId}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
+                    $"Data/Temp/PlayerBattleTempImage/{playerId}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
                 using (var image = surface.Snapshot())
                 using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
                 using (var stream = File.OpenWrite(ret))
@@ -536,7 +536,7 @@ namespace SgBot.Open.Utils.Extra
                     lines++;
                 }
                 var ret = Path.Combine(StaticData.ExePath!,
-                    $"Data\\Temp\\PlayerRankTempImage\\{DateTime.Now:yyyy-M-dd--HH-mm-ss}.png");
+                    $"Data/Temp/PlayerRankTempImage/{DateTime.Now:yyyy-M-dd--HH-mm-ss}.png");
                 if (File.Exists(ret))
                 {
                     return ret;

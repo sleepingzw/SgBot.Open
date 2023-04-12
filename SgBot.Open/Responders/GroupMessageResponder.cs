@@ -64,7 +64,7 @@ namespace SgBot.Open.Responders
             }
             catch (Exception e)
             {
-                if (e.Message.StartsWith("原因: 上传文件错误"))
+                if (e.Message.StartsWith("原因: 上传文件错误")|| e.Message.StartsWith("原因: 指定文件不存在"))
                 {
                     return false;
                 }
@@ -79,9 +79,9 @@ namespace SgBot.Open.Responders
                         DateTime.Now);
                     return false;
                 }
-                var exceptionAddress = Path.Combine(StaticData.ExePath!, $"Data\\Exception\\{DateTime.Now:yyyy-M-dd--HH-mm-ss}.json");
+                var exceptionAddress = Path.Combine(StaticData.ExePath!, $"Data/Exception/{DateTime.Now:yyyy-M-dd--HH-mm-ss}.json");
                 await MessageManager.SendFriendMessageAsync("2826241064",
-                    e.ToString() + "\n" + DateTime.Now);
+                    e + "\n" + DateTime.Now);
                 DataOperator.WriteJsonFile(exceptionAddress, DataOperator.ToJsonString(e));
                 Logger.Log(e.Message, LogLevel.Fatal);
                 return false;

@@ -1,5 +1,7 @@
 ﻿using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Data.Shared;
+using Mirai.Net.Sessions.Http.Managers;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.StaticData;
@@ -21,13 +23,13 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task RandomSvPic(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            var pics = Directory.GetFiles(Path.Combine(StaticData.ExePath!, "Data\\Img\\RandomSv")).ToList();
+            var pics = Directory.GetFiles(Path.Combine(StaticData.ExePath!, "Data/Img/RandomSv")).ToList();
             var pic = UsefulMethods.GetRandomFromList(pics);
-            var img = new ImageMessage()
-            {
-                Path = pic
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
             DataBaseOperator.UpSvCount();
         }
         /// <summary>
@@ -40,13 +42,13 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task RandomYydzPic(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            var pics = Directory.GetFiles(Path.Combine(StaticData.ExePath!, "Data\\Img\\Yydz")).ToList();
+            var pics = Directory.GetFiles(Path.Combine(StaticData.ExePath!, "Data/Img/Yydz")).ToList();
             var pic = UsefulMethods.GetRandomFromList(pics);
-            var img = new ImageMessage()
-            {
-                Path = pic
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
             DataBaseOperator.UpYydzCount();
         }
         /*
@@ -93,11 +95,11 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             await DataBaseOperator.UpdateUserInfo(GroupMessageReceivedInfo.Member);
 
             var path = PetPetMaker.MakePetPet(target);
-            var img = new ImageMessage()
-            {
-                Path = path
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+
+            var id = await FileManager.UploadImageAsync(path);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
         }
     }
 }

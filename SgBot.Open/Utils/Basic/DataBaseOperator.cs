@@ -107,7 +107,7 @@ namespace SgBot.Open.Utils.Basic
                 // temp = userInfo;
                 await db.SaveChangesAsync();
             }
-            Logger.Log("更新用户信息 " + userInfo.UserId, 0);
+            Logger.Log("更新用户信息 " + userInfo.UserId, LogLevel.Simple);
         }
         /// <summary>
         /// 更新群聊信息
@@ -123,7 +123,7 @@ namespace SgBot.Open.Utils.Basic
                 // temp = groupInfo;
                 await db.SaveChangesAsync();
             }
-            Logger.Log("更新群聊信息 " + groupInfo.GroupId, 0);
+            Logger.Log("更新群聊信息 " + groupInfo.GroupId, LogLevel.Simple);
         }
         /// <summary>
         /// 更新玩家信息
@@ -138,7 +138,7 @@ namespace SgBot.Open.Utils.Basic
                 db.Players.Update(player);
                 await db.SaveChangesAsync();
             }
-            Logger.Log("更新玩家信息 " + player.Id, 0);
+            Logger.Log("更新玩家信息 " + player.Id, LogLevel.Simple);
         }
         /// <summary>
         /// 根据段位寻找玩家

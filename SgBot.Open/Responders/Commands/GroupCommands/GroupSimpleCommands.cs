@@ -1,5 +1,6 @@
 ﻿using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.StaticData;
@@ -51,11 +52,9 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task CallBot(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            var img = new ImageMessage()
-            {
-                Path = Path.Combine(StaticData.ExePath!, "Data\\Img\\CallMe.png")
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+            var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/CallMe.png"));
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+            await groupMessageReceiver.SendMessageAsync(chain);
         }
         /// <summary>
         /// 查看傻狗力排名
@@ -69,11 +68,11 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             var list = DataBaseOperator.TokenSort();
             var ret = ImageMaker.MakeSortImage(list, groupMessageReceivedInfo.Member);
-            var img = new ImageMessage()
-            {
-                Path = ret
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+
+            var id = await FileManager.UploadImageAsync(ret);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+            await groupMessageReceiver.SendMessageAsync(chain);
+
             TaskHolder.DeleteTask(ret);
         }
         /// <summary>
@@ -87,10 +86,11 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             GroupMessageReceiver groupMessageReceiver)
         {
             var builder = new MessageChainBuilder();
-            builder.Plain("呜呜,非常感谢");
-            builder.ImageFromPath(Path.Combine(StaticData.ExePath!, "Data\\Img\\PayMe.png"));
-            var ret = builder.Build();
-            await groupMessageReceiver.SendMessageAsync(ret);
+
+            var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/PayMe.png"));
+            var chain = builder.Plain("呜呜，非常感谢").ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
         }
     }
 }

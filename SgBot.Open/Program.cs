@@ -22,6 +22,7 @@ var init=Initializer.Initial();
 if(!init)
     return;
 var bot = Initializer.InitBot();
+Logger.Log($"初始化Bot {StaticData.BotConfig.BotQQ} 成功", LogLevel.Important);
 var respond = new WebPicResponder();
 
 await bot.LaunchAsync();

@@ -14,18 +14,18 @@ namespace SgBot.Open.Utils.Basic
         ///     % Processor Time 是所有进程线程使用处理器执行指令所花的时间百分比。指令是计算机执行的基础单位。线程是执行指令的对象，进程是程序运行时创建的对象。此计数包括处理某些硬件间隔和陷阱条件所执行的代码。
         /// </summary>
         private static readonly PerformanceCounter CpuCounter =
-            new PerformanceCounter("Processor", "% Processor Time", "_Total");
+            new("Processor", "% Processor Time", "_Total");
 
         /// <summary>
         ///     Available MBytes 指能立刻分配给一个进程或系统使用的物理内存数量，以 MB 为单位表示。它等于分配给待机(缓存的)、空闲和零分页列表内存的总和。
         /// </summary>
-        private static readonly PerformanceCounter RamCounter = new PerformanceCounter("Memory", "Available MBytes");
-        
+        private static readonly PerformanceCounter RamCounter = new("Memory", "Available MBytes");
+
         /// <summary>
         ///     System Up Time 指计算机自上次启动后已经运行的时间(以秒计)。此计数器显示启动时间和当前时间之差。
         /// </summary>
-        private static readonly PerformanceCounter Uptime = new PerformanceCounter("System", "System Up Time");
-        
+        private static readonly PerformanceCounter Uptime = new("System", "System Up Time");
+
         /// <summary>
         ///     开机时间
         /// </summary>
@@ -184,5 +184,77 @@ namespace SgBot.Open.Utils.Basic
 
             return "";
         }
+
+        #region linux?
+
+        //    /// <summary>
+        //    /// 获取进程CPU及内存使用情况
+        //    /// </summary>
+        //    /// <param name="processType">进程名称</param>
+        //    private void GetCPUandMemory(string processType)
+        //    {
+        //        try
+        //        {
+        //            var str = ExecuteCommand("ps -aux");
+        //            var str_l = str.Where(o => !string.IsNullOrWhiteSpace(o.ToString()))
+        //                .Select(o => o.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+        //            var c = str_l.FirstOrDefault();
+        //            var l = str_l.Skip(1);
+
+        //            var data = l.Select(o =>
+        //            {
+        //                Dictionary<string, string> temp = new Dictionary<string, string>();
+        //                for (var i = 0; i < c.Length; i++)
+        //                    if (i == 10) temp.Add(c[i], string.Join(" ", o.Skip(10)));
+        //                    else temp.Add(c[i], o[i]);
+        //                return temp;
+        //            });
+
+        //            var ps = data.FirstOrDefault(o => o["COMMAND"].Contains(processType));
+        //            var cpuPercent = Convert.ToDouble(ps["%CPU"]); //CPU 占用比例
+
+        //            var memoryValue = Convert.ToInt64(ps["RSS"]); //真实内存
+        //            var memoryPercent = Convert.ToDouble(ps["%MEM"]); //内存占用比例
+        //            var memoryOther = Convert.ToInt64(ps["VSZ"]); //虚拟内存
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //        }
+        //    }
+
+        //    private string ExecuteCommand(string command)
+        //    {
+        //        try
+        //        {
+
+        //            var str = $"执行的命令";
+        //            Process p = new Process();
+        //            //设置要启动的应用程序
+        //            p.StartInfo.FileName = "bash";
+        //            //是否使用操作系统shell启动
+        //            p.StartInfo.UseShellExecute = false;
+        //            // 接受来自调用程序的输入信息
+        //            p.StartInfo.RedirectStandardInput = true;
+        //            //输出信息
+        //            p.StartInfo.RedirectStandardOutput = true;
+        //            // 输出错误
+        //            p.StartInfo.RedirectStandardError = false;
+        //            //不显示程序窗口
+        //            p.StartInfo.CreateNoWindow = true;
+        //            p.Start();
+        //            p.StandardInput.WriteLine(str);
+        //            p.StandardInput.Close();
+        //            var fileData = p.StandardOutput.ReadToEnd();
+        //            p.WaitForExit();
+        //            p.Close();
+        //            return fileData;
+        //        }
+        //        catch (Exception e)
+        //        {
+        //            Logger.Log(e.Message,LogLevel.Fatal);
+        //            return "fatal";
+        //        }
+        //    }
+        #endregion
     }
 }

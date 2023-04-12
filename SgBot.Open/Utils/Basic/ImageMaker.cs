@@ -36,7 +36,7 @@ namespace SgBot.Open.Utils.Basic
             using var glCanvas = surface.Canvas;
             var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
             var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
-            // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
+            // using var skTypeface = SKTypeface.FromFile("C:/AlisaBot/Fonts/华康少女文字W5.ttf", 0);
             using var skFont = new SKFont(skTypeface, 30);
             using var skTextPaint = new SKPaint
             {
@@ -61,7 +61,7 @@ namespace SgBot.Open.Utils.Basic
 
             glCanvas.DrawText($"您是第{u}位,共有{infoList.Count}条数据", 3f, 340, skTextPaint);
             var ret = Path.Combine(StaticData.ExePath!,
-                $"Data\\Temp\\SortTempImage\\{DateTime.Now:yyyy-M-dd--HH-mm-ss}.png");
+                $"Data/Temp/SortTempImage/{DateTime.Now:yyyy-M-dd--HH-mm-ss}.png");
             using (var image = surface.Snapshot())
             using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
             using (var stream = File.OpenWrite(ret))

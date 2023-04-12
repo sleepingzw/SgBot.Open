@@ -57,12 +57,12 @@ namespace SgBot.Open.Utils.Basic
             response.AddHeader("Last-Modified", "Wed, 21 Oct 2000 12:00:00 GMT");
             var cardIdStr = url.Split('?').Last();
 
-            var fileName = Path.Combine(StaticData.ExePath!, "Data\\Img\\Setu\\" + cardIdStr + "\\" + "pic.jpg");
+            var fileName = Path.Combine(StaticData.ExePath!, "Data/Img/Setu/" + cardIdStr + "/" + "pic.jpg");
 
             if (!File.Exists(fileName))
             {
                 NoFound(url, response);
-                Console.WriteLine(fileName);
+                Logger.Log($"{fileName}不存在",LogLevel.Important);
                 return;
             }
 

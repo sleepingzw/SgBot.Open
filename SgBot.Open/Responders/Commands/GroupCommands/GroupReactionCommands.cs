@@ -121,7 +121,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var json = DataOperator.ToJsonString(msg);
             await MessageManager.SendFriendMessageAsync("2826241064", json);
             await groupMessageReceiver.QuoteMessageAsync("已传话(有建设性意见可以直接加用户反馈群442069136)");
-            var commentAddress = Path.Combine(StaticData.ExePath!, $"Data\\Comments\\{DateTime.Now:yyyy-M-dd--HH-mm-ss}.json");
+            var commentAddress = Path.Combine(StaticData.ExePath!, $"Data/Comments/{DateTime.Now:yyyy-M-dd--HH-mm-ss}.json");
             DataOperator.WriteJsonFile(commentAddress, msg);
             Logger.Log(
                 $"{msg.Who}({msg.Name})在{msg.GroupFrom}({msg.GroupName})发送了一条评论",

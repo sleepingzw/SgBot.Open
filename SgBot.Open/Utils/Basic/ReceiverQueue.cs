@@ -61,7 +61,7 @@ namespace SgBot.Open.Utils.Basic
                 }
                 catch (Exception ex)
                 {
-                    Logger.Log(ex.ToString(),LogLevel.Fatal);
+                    Logger.Log(ex.Message,LogLevel.Fatal);
                 }
             }
         }

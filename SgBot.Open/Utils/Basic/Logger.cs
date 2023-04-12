@@ -34,16 +34,17 @@ namespace SgBot.Open.Utils.Basic
                         break;
                     case LogLevel.Fatal:
                         AnsiConsole.Markup(" [red]" +
-                                           "    [[FATAL]] [/]");
+                                           "  [[FATAL]]   [/]");
                         break;
                     default:
                         throw new ArgumentOutOfRangeException(nameof(level), level, null);
                 }
-                AnsiConsole.Markup($"{what}\n");
+                // AnsiConsole.Markup($"[white]{what}[/]\n");
+                Console.WriteLine(what);
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                Console.WriteLine($"\n{e}");
             }
         }
     }

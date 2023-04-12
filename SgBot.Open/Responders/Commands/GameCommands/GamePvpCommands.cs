@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.StaticData;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace SgBot.Open.Responders.Commands.GameCommands
 {
@@ -87,11 +88,11 @@ namespace SgBot.Open.Responders.Commands.GameCommands
 
             await DataBaseOperator.UpdatePlayer(player);
             var pic = GameImageMaker.MakePVPBattleImage(log, player.Id, result);
-            var img = new ImageMessage()
-            {
-                Path = pic
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
 
@@ -112,11 +113,6 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             }
 
             var target = groupMessageReceivedInfo.AtMessages[0].Target;
-            //if (target == StaticData.BotConfig.BotQQ)
-            //{
-            //    await groupMessageReceiver.QuoteMessageAsync("你失败了");
-            //    return;
-            //}
 
             var player = await DataBaseOperator.FindPlayer(groupMessageReceivedInfo.Member.UserId);
             player.Refresh();
@@ -132,11 +128,10 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 IsUpgrade = false
             };
             var pic = GameImageMaker.MakePVPBattleImage(log, player.Id, result);
-            var img = new ImageMessage()
-            {
-                Path = pic
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
     }

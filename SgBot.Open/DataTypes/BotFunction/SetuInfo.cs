@@ -59,9 +59,9 @@ namespace SgBot.Open.DataTypes.BotFunction
             string a, b;
             a = imgname.Split('.')[0];
             b = imgname.Split('.')[1];
-            address = Path.Combine(StaticData.StaticData.ExePath!, "Data\\Img\\Setu\\" + a + "\\" + "pic." + b);
-            dicaddress = Path.Combine(StaticData.StaticData.ExePath!, "Data\\Img\\Setu\\" + a);
-            jsonaddress = Path.Combine(StaticData.StaticData.ExePath!, "Data\\Img\\Setu\\" + a + "\\" + "data.json");
+            address = Path.Combine(StaticData.StaticData.ExePath!, "Data/Img/Setu/" + a + "/" + "pic." + b);
+            dicaddress = Path.Combine(StaticData.StaticData.ExePath!, "Data/Img/Setu/" + a);
+            jsonaddress = Path.Combine(StaticData.StaticData.ExePath!, "Data/Img/Setu/" + a + "/" + "data.json");
         }
         public bool FindExist()
         {

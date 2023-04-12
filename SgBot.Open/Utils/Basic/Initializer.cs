@@ -26,10 +26,13 @@ namespace SgBot.Open.Utils.Basic
                 if (StaticData.ExePath.IsNullOrEmpty())
                     return false;
                 StaticData.BotInfos =
-                    DataOperator.GetJsonFile<List<BotInfo>>(Path.Combine(StaticData.ExePath, "Data\\BotInfo.json"));
+                    DataOperator.GetJsonFile<List<BotInfo>>(Path.Combine(StaticData.ExePath, "Data/BotInfo.json"));
                 StaticData.BotConfig =
-                    DataOperator.GetJsonFile<BotConfig>(Path.Combine(StaticData.ExePath, "Data\\BotConfig.json"));
+                    DataOperator.GetJsonFile<BotConfig>(Path.Combine(StaticData.ExePath, "Data/BotConfig.json"));
                 var flag = CheckDirectoryCreated();
+                //Console.WriteLine(StaticData.BotConfig.MahAddress);
+                //Console.WriteLine(StaticData.BotConfig.VerifyKey);
+                //Console.WriteLine(StaticData.BotConfig.BotQQ);
                 return flag;
             }
             catch(Exception exception)

@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace SgBot.Open.Responders.Commands.GameCommands
 {
@@ -30,11 +31,10 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             // player.SortBag();
             await DataBaseOperator.UpdatePlayer(player);
             var pic = GameImageMaker.MakeSgGamePlayerImage(player);
-            var img = new ImageMessage()
-            {
-                Path = pic
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
         /// <summary>
@@ -52,11 +52,10 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             // player.SortBag();
             await DataBaseOperator.UpdatePlayer(player);
             var pic = GameImageMaker.MakeSgGameBag(player);
-            var img = new ImageMessage()
-            {
-                Path = pic
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
         /// <summary>
@@ -75,11 +74,10 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 await DataBaseOperator.UpdatePlayer(player);
             }
             var pic = GameImageMaker.MakeSgGameRankImage(DataBaseOperator.OutGameRank());
-            var img = new ImageMessage()
-            {
-                Path = pic
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
         /// <summary>

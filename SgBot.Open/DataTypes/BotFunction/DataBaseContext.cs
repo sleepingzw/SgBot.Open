@@ -21,7 +21,7 @@ namespace SgBot.Open.DataTypes.BotFunction
 
         public DataBaseContext()
         {
-            DbPath = Path.Combine(StaticData.StaticData.ExePath!, "Data\\data.db");
+            DbPath = Path.Combine(StaticData.StaticData.ExePath!, "Data/data.db");
             // DbPath = "D:\\vspjt\\SgBot.Open\\SgBot.Open\\bin\\Debug\\net6.0\\Data\\data.db";
         }
         protected override void OnConfiguring(DbContextOptionsBuilder options)

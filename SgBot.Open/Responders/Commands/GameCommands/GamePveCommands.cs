@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.Utils.Extra;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace SgBot.Open.Responders.Commands.GameCommands
 {
@@ -64,11 +65,11 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 await DataBaseOperator.UpdatePlayer(player);
 
                 var pic = GameImageMaker.MakeSgGamePveImage(player, result, allCoinGet, levelUp);
-                var img = new ImageMessage()
-                {
-                    Path = pic
-                };
-                await groupMessageReceiver.SendMessageAsync(img);
+
+                var id = await FileManager.UploadImageAsync(pic);
+                var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+                await groupMessageReceiver.SendMessageAsync(chain);
                 TaskHolder.DeleteTask(pic);
             }
             else

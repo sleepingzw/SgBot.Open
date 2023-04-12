@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Mirai.Net.Sessions.Http.Managers;
 
 namespace SgBot.Open.Utils.Basic
 {
@@ -22,16 +23,14 @@ namespace SgBot.Open.Utils.Basic
         }
         public void DownloadPicture()
         {
-            bool value = false;
-            WebResponse response = null;
             Stream stream = null;
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(picUrl);
                 if (timeOut != -1) request.Timeout = timeOut;
-                response = request.GetResponse();
+                var response = request.GetResponse();
                 if (!response.ContentType.ToLower().StartsWith("text/"))
-                    value = SaveBinaryFile(response, savePath, st.dicaddress);
+                    SaveBinaryFile(response, savePath, st.dicaddress);
                 // 生成信息文件
                 if (File.Exists(st.jsonaddress)) File.Delete(st.jsonaddress);
                 DataOperator.WriteJsonFile(st.jsonaddress, DataOperator.ToJsonString(st));
@@ -39,8 +38,7 @@ namespace SgBot.Open.Utils.Basic
             }
             catch (WebException ex)
             {
-                Console.WriteLine(ex.Message);
-                throw ex;
+                Logger.Log(ex.Message,LogLevel.Error);
             }
             finally
             {

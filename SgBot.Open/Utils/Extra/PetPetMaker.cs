@@ -21,7 +21,7 @@ namespace SgBot.Open.Utils.Extra
         }
         internal static string MakePetPet(string qqid, int delay = 7)
         {
-            var resourcesDir = Path.Combine(StaticData.ExePath!, "Data\\Img\\GifBack");
+            var resourcesDir = Path.Combine(StaticData.ExePath!, "Data/Img/GifBack");
             if (!Directory.Exists(resourcesDir)) { Directory.CreateDirectory(resourcesDir); }
             var saveDir = Path.Combine(resourcesDir, $"petpet_{qqid}.gif");
             if (File.Exists(saveDir))
@@ -87,7 +87,7 @@ namespace SgBot.Open.Utils.Extra
             using var rgbSurface = SKSurface.Create(rgbImageInfo);
             rgbSurface.Canvas.DrawColor(SKColors.White); //绘制底色
             rgbSurface.Canvas.DrawImage(processingImage, x, y); //将头像置于底色顶部
-            rgbSurface.Canvas.DrawBitmap(SKBitmap.Decode(Path.Combine(StaticData.ExePath!, $"Data\\Img\\PetPet\\{index}.png")), 0, handoffsety); //绘制手
+            rgbSurface.Canvas.DrawBitmap(SKBitmap.Decode(Path.Combine(StaticData.ExePath!, $"Data/Img/PetPet/{index}.png")), 0, handoffsety); //绘制手
             rgbSurface.Flush();
             // rgbaSurface.Canvas.Clear();
             /*
@@ -101,14 +101,14 @@ namespace SgBot.Open.Utils.Extra
             //System.Diagnostics.Debug.Assert(glRgbaSurface == glRgbSurface);
             glRgbSurface.Canvas.DrawColor(SKColors.White); //绘制底色
             glRgbSurface.Canvas.DrawImage(processingImage, x, y); //将头像置于底色顶部
-            glRgbSurface.Canvas.DrawBitmap(SKBitmap.Decode($"C:\\SgBot\\ImgResources\\PetPet\\{index}.png"), 0, handoffsety); //绘制手
+            glRgbSurface.Canvas.DrawBitmap(SKBitmap.Decode($"C:/SgBot/ImgResources/PetPet/{index}.png"), 0, handoffsety); //绘制手
             glRgbSurface.Flush();
             */
             return rgbSurface.Snapshot();
         }
         private static SKBitmap? GetAvater(string qqid)
         {
-            var avaterDir = Path.Combine(StaticData.ExePath!, "Data\\Img\\Avatars");
+            var avaterDir = Path.Combine(StaticData.ExePath!, "Data/Img/Avatars");
             if (!Directory.Exists(avaterDir)) { Directory.CreateDirectory(avaterDir); }
             var avaterFile = Path.Combine(avaterDir, $"{qqid}.png");
             if (File.Exists(avaterFile))

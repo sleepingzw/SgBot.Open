@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Security.Policy;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 using SgBot.Open.Utils.Basic;
+using SlpzLibrary;
 
 namespace SgBot.Open.DataTypes.Extra
 {
-    internal class RedPackage : IComparable
+    internal class RedBag : IComparable
     {
         
         public int Id { get; set; }
         public int AmountLeft { get; set; }
         public int TokenLeft { get; set; }
         public List<string> WhoGot { get; set; }
-        public RedPackage(int id, int amountLeft, int tokenLeft)
+        public RedBag(int id, int amountLeft, int tokenLeft)
         {
             Id = id;
             AmountLeft = amountLeft;
@@ -24,25 +27,25 @@ namespace SgBot.Open.DataTypes.Extra
         }
         public int CompareTo(object? obj)
         {
-            var p = (RedPackage)obj!;
+            var p = (RedBag)obj!;
             return this.Id.CompareTo(p.Id);
         }
 
     }
 
-    public static class RedPacketManager
+    public static class RedBagManager
     {
-        private static readonly Dictionary<string, List<RedPackage>> AllPackages = new();
+        private static readonly Dictionary<string, List<RedBag>> AllRedBags = new();
 
-        public static int CreatePackage(string groupId,int allToken, int allAmount)
+        public static int CreateRedBag(string groupId,int allToken, int allAmount)
         {
-            var id = 0;
-            if (AllPackages.ContainsKey(groupId))
+            var id = 1;
+            if (AllRedBags.ContainsKey(groupId))
             {
-                AllPackages[groupId].Sort();
+                AllRedBags[groupId].Sort();
                 while (true)
                 {
-                    var sameFlag = AllPackages[groupId].Any(pkgs => pkgs.Id == id);
+                    var sameFlag = AllRedBags[groupId].Any(pkgs => pkgs.Id == id);
                     if (sameFlag)
                     {
                         id++;
@@ -55,11 +58,11 @@ namespace SgBot.Open.DataTypes.Extra
             }
             else
             {
-                AllPackages.Add(groupId, new List<RedPackage>());
+                AllRedBags.Add(groupId, new List<RedBag>());
             }
 
-            var rp = new RedPackage(id, allAmount, allToken);
-            AllPackages[groupId].Add(rp);
+            var rp = new RedBag(id, allAmount, allToken);
+            AllRedBags[groupId].Add(rp);
             return id;
         }
         /// <summary>
@@ -69,25 +72,29 @@ namespace SgBot.Open.DataTypes.Extra
         /// <param name="whichPkg">群中哪个红包</param>
         /// <param name="who">领红包的是谁</param>
         /// <returns>红包状态</returns>
-        public static PackageStatus GetPackage(string groupId, int whichPkg, string who)
+        public static RedBagStatus GetRedBag(string groupId, int whichPkg, string who)
         {
-            if (AllPackages.ContainsKey(groupId))
+            if (AllRedBags.ContainsKey(groupId))
             {
-                foreach (var pkg in AllPackages[groupId])
+                foreach (var pkg in AllRedBags[groupId])
                 {
                     if (pkg.Id == whichPkg)
                     {
-                        return pkg.WhoGot.Contains(who) ? PackageStatus.Success : PackageStatus.OneHaveGot;
+                        if (pkg.WhoGot.Contains(who))
+                        {
+                            return RedBagStatus.OneHaveGot;
+                        }
+                        return RedBagStatus.Success;
                     }
 
-                    return PackageStatus.CouldNotFind;
+                    return RedBagStatus.CouldNotFind;
                 }
             }
             else
             {
-                return PackageStatus.CouldNotFind;
+                return RedBagStatus.CouldNotFind;
             }
-            return PackageStatus.CouldNotFind;
+            return RedBagStatus.CouldNotFind;
         }
         /// <summary>
         /// 打开红包
@@ -96,21 +103,23 @@ namespace SgBot.Open.DataTypes.Extra
         /// <param name="whichPkg">群中哪个红包</param>
         /// <param name="who">领红包的是谁</param>
         /// <returns>领到的红包数量</returns>
-        public static int OpenPackage(string groupId, int whichPkg, string who)
+        public static int OpenRedBag(string groupId, int whichPkg, string who)
         {
-            var amountLeft = AllPackages[groupId][whichPkg].AmountLeft;
-            var tokenLeft = AllPackages[groupId][whichPkg].TokenLeft;
+            var tempBag = AllRedBags[groupId].First(b => b.Id == whichPkg)!;
+
+            var amountLeft = tempBag.AmountLeft;
+            var tokenLeft = tempBag.TokenLeft;
             var ret = 0;
             if (amountLeft == 1)
             {
                 ret = tokenLeft;
-                PackageDispose(groupId, whichPkg, who);
+                RedBagDispose(groupId, whichPkg, who);
             }
             else
             {
-                ret = (int)UsefulMethods.MakeRandom(1, (2 * tokenLeft) / amountLeft);
-                AllPackages[groupId][whichPkg].TokenLeft -= ret;
-                PackageDispose(groupId, whichPkg, who);
+                ret = (int)UsefulMethods.MakeRandom((2 * tokenLeft) / amountLeft,1 );
+                tempBag.TokenLeft -= ret;
+                RedBagDispose(groupId, whichPkg, who);
             }
             return ret;
         }
@@ -121,23 +130,36 @@ namespace SgBot.Open.DataTypes.Extra
         /// <param name="whichPkg">群中哪个红包</param>
         /// <param name="who">谁领红包</param>
         /// <returns>true是红包被销毁，false是没有被销毁</returns>
-        private static bool PackageDispose(string groupId, int whichPkg, string who)
+        private static bool RedBagDispose(string groupId, int whichPkg, string who)
         {
-            if (AllPackages[groupId][whichPkg].AmountLeft == 1)
+            var tempBag = AllRedBags[groupId].First(b => b.Id == whichPkg)!;
+            if (tempBag.AmountLeft == 1)
             {
-                AllPackages[groupId].RemoveAt(whichPkg);
-                if (AllPackages[groupId].Count == 0)
+                AllRedBags[groupId].Remove(tempBag);
+                if (AllRedBags[groupId].Count == 0)
                 {
-                    AllPackages.Remove(groupId);
+                    AllRedBags.Remove(groupId);
                 }
                 return true;
             }
-            AllPackages[groupId][whichPkg].AmountLeft--;
-            AllPackages[groupId][whichPkg].WhoGot.Add(who);
+            tempBag.AmountLeft--;
+            tempBag.WhoGot.Add(who);
             return false;
         }
+
+        public static string ShowAllBag(string groupid)
+        {
+            var ret = "";
+            foreach (var b in AllRedBags[groupid])
+            {
+                ret += DataOperator.ToJsonString(b);
+                ret += '\n';
+            }
+
+            return ret;
+        }
     }
-    public enum PackageStatus
+    public enum RedBagStatus
     {
         CouldNotFind,
         OneHaveGot,

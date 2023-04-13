@@ -16,7 +16,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
 {
     internal static partial class BotGroupCommands
     {
-        [ChatCommand("发红包", "/sendredpackage")]
+        [ChatCommand("发红包", "/sendredbag")]
         public static async Task CreateRedPackage(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
@@ -26,7 +26,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 return;
             }
             var token = int.Parse(Regex.Replace(groupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", ""));
-            var amount = int.Parse(Regex.Replace(groupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", ""));
+            var amount = int.Parse(Regex.Replace(groupMessageReceivedInfo.PlainMessages[2], @"[^0-9]+", ""));
             if (groupMessageReceivedInfo.Member.Token < token)
             {
                 await groupMessageReceiver.QuoteMessageAsync("你没有这么多傻狗力");
@@ -37,13 +37,13 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 await groupMessageReceiver.QuoteMessageAsync("总傻狗力必须大于红包数量");
                 return;
             }
-            var id=RedPacketManager.CreatePackage(groupMessageReceivedInfo.Group.GroupId,token,amount);
+            var id=RedBagManager.CreateRedBag(groupMessageReceivedInfo.Group.GroupId,token,amount);
             groupMessageReceivedInfo.Member.Token -= token;
             await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
-            await groupMessageReceiver.QuoteMessageAsync($"发红包成功,红包id{id},红包总傻狗力{token},红包总数量{amount}");
+            await groupMessageReceiver.QuoteMessageAsync($"发红包成功,红包id {id},红包总傻狗力{token},红包总数量{amount}");
         }
 
-        [ChatCommand("抢红包", "/robredpackage")]
+        [ChatCommand("抢红包", "/robredbag")]
         public static async Task RobRedPackage(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
@@ -53,18 +53,18 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 return;
             }
             var which = int.Parse(Regex.Replace(groupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", ""));
-            var status = RedPacketManager.GetPackage(groupMessageReceivedInfo.Group.GroupId, which,
+            var status = RedBagManager.GetRedBag(groupMessageReceivedInfo.Group.GroupId, which,
                 groupMessageReceivedInfo.Member.UserId);
             switch (status)
             {
-                case PackageStatus.CouldNotFind:
+                case RedBagStatus.CouldNotFind:
                     await groupMessageReceiver.QuoteMessageAsync("红包不存在或者参数不合法");
                     break;
-                case PackageStatus.OneHaveGot:
+                case RedBagStatus.OneHaveGot:
                     await groupMessageReceiver.QuoteMessageAsync("你已经领过了这个红包");
                     break;
-                case PackageStatus.Success:
-                    var tokenGet = RedPacketManager.OpenPackage(groupMessageReceivedInfo.Group.GroupId, which,
+                case RedBagStatus.Success:
+                    var tokenGet = RedBagManager.OpenRedBag(groupMessageReceivedInfo.Group.GroupId, which,
                         groupMessageReceivedInfo.Member.UserId);
                     groupMessageReceivedInfo.Member.Token += tokenGet;
                     await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
@@ -72,6 +72,18 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        [ChatCommand("展示全部红包", "/showredbag")]
+        public static async Task ShowRedPackage(GroupMessageReceivedInfo groupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (groupMessageReceivedInfo.IsOwner)
+            {
+
+                var ret = RedBagManager.ShowAllBag(groupMessageReceivedInfo.Group.GroupId);
+                await groupMessageReceiver.QuoteMessageAsync(ret);
             }
         }
     }

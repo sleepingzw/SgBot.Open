@@ -15,8 +15,10 @@ using Newtonsoft.Json.Linq;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.SgGame;
 using SgBot.Open.DataTypes.StaticData;
+using SgBot.Open.Responders;
 using SgBot.Open.Utils.Basic;
 
+var friendDic = new Dictionary<string, NewFriendRequestedEvent>();
 var exit = new ManualResetEvent(false);
 var init=Initializer.Initial();
 if(!init)
@@ -90,7 +92,16 @@ bot.EventReceived.OfType<MemberJoinedEvent>().Subscribe(x =>
 {
     MessageManager.SendGroupMessageAsync(x.Member.Group.Id, $"欢迎 {x.Member.Name} 加入本群");
 });
-
+bot.EventReceived.OfType<NewFriendRequestedEvent>().Subscribe(x =>
+{
+    MessageManager.SendFriendMessageAsync("2826241064", $"{x.FromId} 加好友");
+    FriendRequestOperator.AddRequest(x.FromId, x);
+});
+bot.MessageReceived.OfType<FriendMessageReceiver>().Subscribe(x =>
+{
+    var responder = new FriendMessageResponder();
+    responder.Respond(x);
+});
 #region Update
 //var ee = Console.ReadLine();
 //if (ee == "read")

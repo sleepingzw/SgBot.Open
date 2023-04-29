@@ -17,6 +17,7 @@ using SgBot.Open.DataTypes.SgGame;
 using SgBot.Open.DataTypes.StaticData;
 using SgBot.Open.Responders;
 using SgBot.Open.Utils.Basic;
+using Spectre.Console;
 
 var friendDic = new Dictionary<string, NewFriendRequestedEvent>();
 var exit = new ManualResetEvent(false);
@@ -102,6 +103,31 @@ bot.MessageReceived.OfType<FriendMessageReceiver>().Subscribe(x =>
     var responder = new FriendMessageResponder();
     responder.Respond(x);
 });
+
+async Task Connect()
+{
+    while (true)
+    {
+        try
+        {
+            Logger.Log("尝试建立连接...", LogLevel.Important);
+            await bot.LaunchAsync();
+            Logger.Log($"登录Bot {StaticData.BotConfig.BotQQ} 成功", LogLevel.Important);
+            break;
+        }
+        catch (Exception ex)
+        {
+            Logger.Log(ex.Message, LogLevel.Error);
+        }
+    }
+}
+
+bot.DisconnectionHappened.Subscribe(async x =>
+{
+    Logger.Log($"失去连接:{x}", LogLevel.Error);
+    await Connect();
+});
+
 #region Update
 //var ee = Console.ReadLine();
 //if (ee == "read")

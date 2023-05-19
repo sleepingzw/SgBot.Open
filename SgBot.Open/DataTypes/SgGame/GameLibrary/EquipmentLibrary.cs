@@ -670,7 +670,7 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                 EquipmentEffect = new EquipmentEffect()
                 {
                     PhysicalAtkBonus = 3.2,
-                    MagicAtkBonus = -0.91,
+                    MagicAtkBonus = 1.6,
                     SpeedBonus = 4,
                     SwiftBonus = -0.5,
                     CriticalDamageBonus = 8,
@@ -698,13 +698,13 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                 EquipmentEffect = new EquipmentEffect()
                 {
                     PhysicalAtkBonus = 1.6,
-                    PhysicalDefBonus = 0.114,
+                    PhysicalDefBonus = 1.14,
                     MagicAtkBonus = 1.6,
-                    MagicDefBonus = 0.114,
+                    MagicDefBonus = 1.14,
                     SpeedBonus = 2,
-                    SwiftBonus = -0.7,
-                    MaxHpBonus = 0.19,
-                    MaxShieldBonus = 0.81
+                    SwiftBonus = 5.14,
+                    MaxHpBonus = 4,
+                    MaxShieldBonus = 4
                 }
             };
             JewelryList[5].Add(jewelry5_1);

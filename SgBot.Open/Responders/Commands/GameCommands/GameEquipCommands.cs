@@ -28,13 +28,13 @@ namespace SgBot.Open.Responders.Commands.GameCommands
         {
             if (groupMessageReceivedInfo.PlainMessages.Count < 2)
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
             var temp = Regex.Replace(groupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
             if (temp.IsNullOrEmpty())
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
             var what = int.Parse(temp);
@@ -42,13 +42,14 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Refresh();
             if (player.Bag.Count < what)
             {
-                await groupMessageReceiver.QuoteMessageAsync("装备不存在");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "装备不存在", true));
                 return;
             }
 
             if (player.Bag[what - 1].OnBody)
             {
-                await groupMessageReceiver.QuoteMessageAsync($"物品 {player.Bag[what - 1].Name} 已经处于装备状态");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                    $"物品 {player.Bag[what - 1].Name} 已经处于装备状态", true));
                 return;
             }
 
@@ -61,14 +62,14 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                     {
                         item.OnBody = false;
                         player.Bag[what - 1].OnBody = true;
-                        await groupMessageReceiver.QuoteMessageAsync($"已经替换武器 {targetEquip.Name}");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"已经替换武器 {targetEquip.Name}", true));
                         changed = true;
                         break;
                     }
                     if (!changed)
                     {
                         player.Bag[what - 1].OnBody = true;
-                        await groupMessageReceiver.QuoteMessageAsync($"已经装备武器 {targetEquip.Name}");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"已经装备武器 {targetEquip.Name}", true));
                     }
                     break;
                 case EquipmentCategory.Armor:
@@ -76,14 +77,14 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                     {
                         item.OnBody = false;
                         player.Bag[what - 1].OnBody = true;
-                        await groupMessageReceiver.QuoteMessageAsync($"已经替换防具 {targetEquip.Name}");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"已经替换防具 {targetEquip.Name}", true));
                         changed = true;
                         break;
                     }
                     if (!changed)
                     {
                         player.Bag[what - 1].OnBody = true;
-                        await groupMessageReceiver.QuoteMessageAsync($"已经装备防具 {targetEquip.Name}");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"已经装备防具 {targetEquip.Name}", true));
                     }
                     break;
                 case EquipmentCategory.Jewelry:
@@ -91,14 +92,14 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                     {
                         item.OnBody = false;
                         player.Bag[what - 1].OnBody = true;
-                        await groupMessageReceiver.QuoteMessageAsync($"已经替换饰品 {targetEquip.Name}");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"已经替换饰品 {targetEquip.Name}", true));
                         changed = true;
                         break;
                     }
                     if (!changed)
                     {
                         player.Bag[what - 1].OnBody = true;
-                        await groupMessageReceiver.QuoteMessageAsync($"已经装备饰品 {targetEquip.Name}");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"已经装备饰品 {targetEquip.Name}", true));
                     }
                     break;
             }
@@ -117,13 +118,13 @@ namespace SgBot.Open.Responders.Commands.GameCommands
         {
             if (groupMessageReceivedInfo.PlainMessages.Count != 2)
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
             var temp = Regex.Replace(groupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
             if (temp.IsNullOrEmpty())
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
 
@@ -132,26 +133,26 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Refresh();
             if (player.Bag.Count < what)
             {
-                await groupMessageReceiver.QuoteMessageAsync("装备不存在");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "装备不存在", true));
                 return;
             }
             var needCoin = 10 * (9 * player.Bag[what - 1].Level + player.Bag[what - 1].Level * player.Bag[what - 1].Level);
             needCoin *= player.Bag[what - 1].Level;
             if (player.Coin < needCoin)
             {
-                await groupMessageReceiver.QuoteMessageAsync($"金币不足,需要 {needCoin} 金币");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"金币不足,需要 {needCoin} 金币", true));
                 return;
             }
             var success = player.Bag[what - 1].UpgradeEquipment();
             if (!success)
             {
-                await groupMessageReceiver.QuoteMessageAsync($"装备 {player.Bag[what - 1].Name} 已经升至最高等级");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"装备 {player.Bag[what - 1].Name} 已经升至最高等级", true));
                 return;
             }
             player.Coin -= needCoin;
             player.SortBag();
             await DataBaseOperator.UpdatePlayer(player);
-            await groupMessageReceiver.QuoteMessageAsync($"装备 {player.Bag[what - 1].Name} 升级成功 当前Rk{player.Bag[what - 1].Level}");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"装备 {player.Bag[what - 1].Name} 升级成功 当前Rk{player.Bag[what - 1].Level}", true));
         }
         /// <summary>
         /// 丢弃背包中的某个装备
@@ -165,7 +166,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
         {
             if (GroupMessageReceivedInfo.PlainMessages.Count != 2)
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
             var player = await DataBaseOperator.FindPlayer(GroupMessageReceivedInfo.Member.UserId);
@@ -176,26 +177,26 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 player.Bag.Clear();
                 player.Bag = tempList;
                 await DataBaseOperator.UpdatePlayer(player);
-                await groupMessageReceiver.QuoteMessageAsync("已丢弃所有非装备物品");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "已丢弃所有非装备物品", true));
                 return;
             }
             var temp = Regex.Replace(GroupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
             if (temp.IsNullOrEmpty())
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
             var what = int.Parse(temp);
 
             if (player.Bag.Count < what)
             {
-                await groupMessageReceiver.QuoteMessageAsync("装备不存在");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "装备不存在", true));
                 return;
             }
             player.Bag.RemoveAt(what - 1);
             player.SortBag();
             await DataBaseOperator.UpdatePlayer(player);
-            await groupMessageReceiver.QuoteMessageAsync("丢弃装备成功");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "丢弃装备成功", true));
         }
     }
 }

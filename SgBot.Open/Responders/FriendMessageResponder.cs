@@ -22,9 +22,10 @@ namespace SgBot.Open.Responders
                 return;
             }
 
-            var id = receiver.MessageChain.OfType<PlainMessage>().ToList()[1];
-            var tf = receiver.MessageChain.OfType<PlainMessage>().ToList()[2];
-            switch (receiver.MessageChain.OfType<PlainMessage>().First())
+            var cc = receiver.MessageChain.OfType<PlainMessage>().ToList()[0].Text;
+            var id = cc.Split(' ')[1];
+            var tf = cc.Split(" ")[2];
+            switch (cc.Split(' ')[0])
             {
                 case "通过好友":
                     var request =

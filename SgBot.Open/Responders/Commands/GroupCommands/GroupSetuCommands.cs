@@ -24,7 +24,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             {
                 groupMessageReceivedInfo.Member.Token--;
                 await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
-                await groupMessageReceiver.QuoteMessageAsync("搜索中");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "搜索中", true));
 
                 var datago = new Datago();
                 var size = new List<string>();
@@ -56,7 +56,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
 
                     if (rb.data.Count == 0)
                     {
-                        await groupMessageReceiver.QuoteMessageAsync("无指定色图");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "无指定色图", true));
                         return;
                     }
 
@@ -89,41 +89,42 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 }
                 catch (Exception exception)
                 {
-                    await groupMessageReceiver.QuoteMessageAsync(exception.Message);
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, exception.Message, true));
+                    // await groupMessageReceiver.QuoteMessageAsync(exception.Message);
                 }
             }
             else
             {
-                await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足哦");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的傻狗力不足哦", true));
             }
         }
         /// <summary>
         /// 根据tag搜色图
         /// </summary>
-        /// <param name="GroupMessageReceivedInfo"></param>
+        /// <param name="groupMessageReceivedInfo"></param>
         /// <param name="groupMessageReceiver"></param>
         /// <returns></returns>
         [ChatCommand("搜色图tag", "/setutag")]
-        public static async Task SetuSearchTag(GroupMessageReceivedInfo GroupMessageReceivedInfo,
+        public static async Task SetuSearchTag(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            if (GroupMessageReceivedInfo.Member.Token > 0)
+            if (groupMessageReceivedInfo.Member.Token > 0)
             {
-                GroupMessageReceivedInfo.Member.Token--;
-                await DataBaseOperator.UpdateUserInfo(GroupMessageReceivedInfo.Member);
-                await groupMessageReceiver.QuoteMessageAsync("搜索中");
+                groupMessageReceivedInfo.Member.Token--;
+                await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "搜索中", true));
 
                 var datago = new Datago();
                 var size = new List<string>();
                 var tag = new List<string>();
                 size.Add("regular");
                 var msg = "";
-                if (GroupMessageReceivedInfo.PlainMessages.Count > 1)
+                if (groupMessageReceivedInfo.PlainMessages.Count > 1)
                 {
-                    msg = GroupMessageReceivedInfo.PlainMessages[1];
+                    msg = groupMessageReceivedInfo.PlainMessages[1];
                 }
                 tag.Add(msg);
-                datago.r18 = (int)GroupMessageReceivedInfo.Group.SetuR18Status;
+                datago.r18 = (int)groupMessageReceivedInfo.Group.SetuR18Status;
                 datago.size = size;
                 datago.keyword = "";
                 datago.tag = tag;
@@ -143,7 +144,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
 
                     if (rb.data.Count == 0)
                     {
-                        await groupMessageReceiver.QuoteMessageAsync("无指定色图");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "无指定色图", true));
+                        //await groupMessageReceiver.QuoteMessageAsync("无指定色图");
                         return;
                     }
 
@@ -171,17 +173,17 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                     DataBaseOperator.UpSetuCount();
                     // await groupMessageReceiver.QuoteMessageAsync(
                     // $"标题:{setu.title}\n作者:{setu.author}\n标签:{taglong}\nPID:{setu.pid}\nURL:{urls}");
-                    await groupMessageReceiver.QuoteMessageAsync(
-                        $"标题:{setu.title}\n作者:{setu.author}\nPID:{setu.pid}\nURL:{urls}");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                        $"标题:{setu.title}\n作者:{setu.author}\nPID:{setu.pid}\nURL:{urls}", true));
                 }
                 catch (Exception exception)
                 {
-                    await groupMessageReceiver.QuoteMessageAsync(exception.Message);
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, exception.Message, true));
                 }
             }
             else
             {
-                await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足哦");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的傻狗力不足哦", true));
             }
         }
         /// <summary>
@@ -197,7 +199,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             {
                 groupMessageReceivedInfo.Member.Token--;
                 await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
-                await groupMessageReceiver.QuoteMessageAsync("搜索中");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "搜索中", true));
 
                 var datago = new Datago();
                 var size = new List<string>();
@@ -224,7 +226,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
 
                     if (rb.data.Count == 0)
                     {
-                        await groupMessageReceiver.QuoteMessageAsync("无指定色图");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "无指定色图", true));
                         return;
                     }
 
@@ -252,17 +254,16 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                     DataBaseOperator.UpSetuCount();
                     // await groupMessageReceiver.QuoteMessageAsync(
                     // $"标题:{setu.title}\n作者:{setu.author}\n标签:{taglong}\nPID:{setu.pid}\nURL:{urls}");
-                    await groupMessageReceiver.QuoteMessageAsync(
-                        $"标题:{setu.title}\n作者:{setu.author}\nPID:{setu.pid}\nURL:{urls}");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"标题:{setu.title}\n作者:{setu.author}\nPID:{setu.pid}\nURL:{urls}", true));
                 }
                 catch (Exception exception)
                 {
-                    await groupMessageReceiver.QuoteMessageAsync(exception.Message);
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, exception.Message, true));
                 }
             }
             else
             {
-                await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足哦");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的傻狗力不足哦", true));
             }
         }
     }

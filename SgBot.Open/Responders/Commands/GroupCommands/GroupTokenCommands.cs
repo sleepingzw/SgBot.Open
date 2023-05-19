@@ -26,12 +26,13 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 var tokenAdd = 9 + (int)UsefulMethods.MakeRandom(6, 0) + (int)UsefulMethods.MakeRandom(6, 0);
                 groupMessageReceivedInfo.Member.Token += tokenAdd;
                 await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
-                await groupMessageReceiver.SendMessageAsync(
-                    $"{groupMessageReceivedInfo.Member.Nickname} 签到成功,增加了{tokenAdd}傻狗力,现在您有{groupMessageReceivedInfo.Member.Token}傻狗力了");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                    $"{groupMessageReceivedInfo.Member.Nickname} 签到成功,增加了{tokenAdd}傻狗力,现在您有{groupMessageReceivedInfo.Member.Token}傻狗力了"));
             }
             else
             {
-                await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},今天你已经签过到了,爪巴");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                    $"{groupMessageReceivedInfo.Member.Nickname},今天你已经签过到了,爪巴"));
             }
         }
         /// <summary>
@@ -51,27 +52,28 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                     {
                         groupMessageReceivedInfo.Member.Permission = Permission.Admin;
                         groupMessageReceivedInfo.Member.Token -= 1000;
-                        await groupMessageReceiver.QuoteMessageAsync("你的权限已提高至1级");
+                        // await groupMessageReceiver.QuoteMessageAsync("你的权限已提高至1级");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的权限已提高至1级", true));
                         await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
                         return;
                     }
-
-                    await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足1000");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的傻狗力不足1000", true));
+                    // await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足1000");
                     return;
                 case Permission.Admin:
                     if (groupMessageReceivedInfo.Member.Token > 2000)
                     {
                         groupMessageReceivedInfo.Member.Permission = Permission.SuperAdmin;
                         groupMessageReceivedInfo.Member.Token -= 2000;
-                        await groupMessageReceiver.QuoteMessageAsync("你的权限已提高至2级");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的权限已提高至2级", true));
                         await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
                         return;
                     }
 
-                    await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足2000");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的傻狗力不足2000", true));
                     return;
                 default:
-                    await groupMessageReceiver.QuoteMessageAsync("无效指令");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "无效指令", true));
                     break;
             }
         }
@@ -85,8 +87,9 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task TokenSearch(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            await groupMessageReceiver.SendMessageAsync(
-                $"{groupMessageReceivedInfo.Member.Nickname},您的傻狗力数量为{groupMessageReceivedInfo.Member.Token}");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                $"{groupMessageReceivedInfo.Member.Nickname},您的傻狗力数量为{groupMessageReceivedInfo.Member.Token}"));
+            //await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},您的傻狗力数量为{groupMessageReceivedInfo.Member.Token}");
         }
         /// <summary>
         /// 将傻狗力转给其他人
@@ -102,19 +105,19 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var target = groupMessageReceivedInfo.AtMessages[0].Target;
             if (target == StaticData.BotConfig.BotQQ)
             {
-                await groupMessageReceiver.QuoteMessageAsync("傻狗的傻狗力是无限的哦");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "傻狗的傻狗力是无限的哦", true));
                 return;
             }
             if (target == groupMessageReceivedInfo.Member.UserId)
             {
-                await groupMessageReceiver.QuoteMessageAsync("你不能给自己转账");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你不能给自己转账", true));
                 return;
             }
             if (groupMessageReceivedInfo.PlainMessages.Count < 2) return;
             var stringAmount = Regex.Replace(groupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
             if (stringAmount.IsNullOrEmpty())
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
 
@@ -122,7 +125,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             {
                 if (amount <= 0)
                 {
-                    await groupMessageReceiver.QuoteMessageAsync("转账数额不合法");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "转账数额不合法", true));
                     return;
                 }
                 if (amount <= groupMessageReceivedInfo.Member.Token)
@@ -132,15 +135,17 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                     var targetUser = await DataBaseOperator.FindUser(target);
                     targetUser.Token += amount;
                     await DataBaseOperator.UpdateUserInfo(targetUser);
-                    await groupMessageReceiver.QuoteMessageAsync($"成功为({targetUser.Nickname})转入 {amount} 傻狗力");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                        $"成功为({targetUser.Nickname})转入 {amount} 傻狗力", true));
+                    // await groupMessageReceiver.QuoteMessageAsync($"成功为({targetUser.Nickname})转入 {amount} 傻狗力");
                     return;
                 }
 
-                await groupMessageReceiver.QuoteMessageAsync("您没有这么多傻狗力");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "您没有这么多傻狗力", true));
                 return;
             }
 
-            await groupMessageReceiver.QuoteMessageAsync("参数错误");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
 
         }
     }

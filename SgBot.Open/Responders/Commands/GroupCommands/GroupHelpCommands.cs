@@ -4,6 +4,7 @@ using Mirai.Net.Sessions.Http.Managers;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.StaticData;
+using SgBot.Open.Utils.Basic;
 using SlpzLibrary;
 
 namespace SgBot.Open.Responders.Commands.GroupCommands
@@ -23,7 +24,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/Menu.png"));
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
 
-            await groupMessageReceiver.SendMessageAsync(chain);
+            //await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
         }
         /// <summary>
         /// 查看群管菜单
@@ -37,8 +39,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/ManageHelp.png"));
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
         }
         /// <summary>
         /// 查看设置菜单
@@ -52,8 +53,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/SettingHelp.png"));
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
         }
         /// <summary>
         /// 查看色图菜单
@@ -67,8 +67,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/SetuHelp.png"));
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
         }
         /// <summary>
         /// 查看傻狗大陆菜单
@@ -82,8 +81,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/GameHelp.png"));
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
         }
     }
 }

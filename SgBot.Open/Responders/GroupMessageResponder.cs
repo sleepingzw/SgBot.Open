@@ -151,7 +151,7 @@ namespace SgBot.Open.Responders
         /// <param name="groupReceiverInfo"></param>
         /// <param name="groupMessageReceiver"></param>
         /// <returns></returns>
-        public static async Task<bool> TryGameCommandRespond(GroupMessageReceivedInfo groupReceiverInfo,
+        private static async Task<bool> TryGameCommandRespond(GroupMessageReceivedInfo groupReceiverInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
             // 没有文本就直接结束游戏指令回应了
@@ -185,7 +185,7 @@ namespace SgBot.Open.Responders
         /// <param name="groupReceiverInfo"></param>
         /// <param name="groupMessageReceiver"></param>
         /// <returns></returns>
-        public static async Task<bool> TryRepeatCommandRespond(GroupMessageReceivedInfo groupReceiverInfo, GroupMessageReceiver groupMessageReceiver)
+        private static async Task<bool> TryRepeatCommandRespond(GroupMessageReceivedInfo groupReceiverInfo, GroupMessageReceiver groupMessageReceiver)
         {
             // 如果禁止复读，不响应
             if (groupReceiverInfo.Group.RepeatFrequency == 0) return false;

@@ -29,7 +29,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
 
-            await groupMessageReceiver.SendMessageAsync(chain);
+            // await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
             DataBaseOperator.UpSvCount();
         }
         /// <summary>
@@ -47,24 +48,10 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
 
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
+            // await groupMessageReceiver.SendMessageAsync(chain);
             DataBaseOperator.UpYydzCount();
         }
-        /*
-        [ChatCommand(new string[] { "看龙图", "随机龙图" }, "/dragon")]
-        public static async Task DragonPic(GroupMessageReceivedInfo GroupMessageReceivedInfo,
-            GroupMessageReceiver groupMessageReceiver)
-        {
-            GroupMessageReceivedInfo.Member.Token--;
-            var img = new ImageMessage()
-            {
-                Url = "nmsl.su"
-            };
-            await groupMessageReceiver.SendMessageAsync(img);
-            await DataBaseOperator.UpdateUserInfo(GroupMessageReceivedInfo.Member);
-        }
-        */
         /// <summary>
         /// 获取头像并且发送摸头图
         /// </summary>
@@ -77,18 +64,20 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             if (GroupMessageReceivedInfo.AtMessages.Count < 1)
             {
-                await groupMessageReceiver.QuoteMessageAsync("找不到摸头的对象");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "找不到摸头的对象", true));
+                // await groupMessageReceiver.QuoteMessageAsync("找不到摸头的对象");
                 return;
             }
             if (GroupMessageReceivedInfo.Member.Token < 10)
             {
-                await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足哦");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你的傻狗力不足哦", true));
+                // await groupMessageReceiver.QuoteMessageAsync("你的傻狗力不足哦");
                 return;
             }
             var target = GroupMessageReceivedInfo.AtMessages[0].Target;
             if (target == StaticData.BotConfig.BotQQ)
             {
-                await groupMessageReceiver.QuoteMessageAsync("?");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "?", true));
                 return;
             }
             GroupMessageReceivedInfo.Member.Token -= 2;
@@ -99,7 +88,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var id = await FileManager.UploadImageAsync(path);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
 
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
         }
     }
 }

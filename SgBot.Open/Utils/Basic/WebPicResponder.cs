@@ -76,7 +76,7 @@ namespace SgBot.Open.Utils.Basic
             response.StatusCode = 404;
             response.ContentType = "text/html;charset=UTF-8";
             response.ContentEncoding = Encoding.UTF8;
-            using (StreamWriter writer = new StreamWriter(response.OutputStream, Encoding.UTF8))
+            using (var writer = new StreamWriter(response.OutputStream, Encoding.UTF8))
                 writer.Write(url + " not found");
             response.Close();
         }

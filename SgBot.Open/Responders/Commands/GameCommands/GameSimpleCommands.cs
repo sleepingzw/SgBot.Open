@@ -34,7 +34,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
 
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
             TaskHolder.DeleteTask(pic);
         }
         /// <summary>
@@ -55,7 +55,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
 
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
             TaskHolder.DeleteTask(pic);
         }
         /// <summary>
@@ -77,7 +77,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
 
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
             TaskHolder.DeleteTask(pic);
         }
         /// <summary>
@@ -92,19 +92,50 @@ namespace SgBot.Open.Responders.Commands.GameCommands
         {
             if (groupMessageReceivedInfo.PlainMessages.Count < 2)
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                 return;
             }
             var name = groupMessageReceivedInfo.PlainMessages[1];
+            if (name.Length > 32)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "名称过长", true));
+                return;
+            }
             if (name.Contains('[') || name.Contains(']') || name.Contains('【') || name.Contains('】') || name.Contains("傻狗"))
             {
-                await groupMessageReceiver.QuoteMessageAsync("非法名称");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "非法名称", true));
                 return;
             }
             var player = await DataBaseOperator.FindPlayer(groupMessageReceivedInfo.Member.UserId);
             player.Name = name;
             await DataBaseOperator.UpdatePlayer(player);
-            await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id}) 改名成功");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id}) 改名成功", true));
+            // await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id}) 改名成功");
+        }
+        /// <summary>
+        /// 查询别人信息
+        /// </summary>
+        /// <param name="groupMessageReceivedInfo"></param>
+        /// <param name="groupMessageReceiver"></param>
+        /// <returns></returns>
+        [ChatCommand(new string[] { "信息" }, new string[] { "/game.info", "/g.info" }, true)]
+        public static async Task GetInfo(GroupMessageReceivedInfo groupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (groupMessageReceivedInfo.AtMessages.Count == 0)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "没有对象", true));
+                return;
+            }
+            var target = groupMessageReceivedInfo.AtMessages[0].Target;
+            var other = await DataBaseOperator.FindPlayer(target);
+            var pic = GameImageMaker.MakeOtherInfoImage(other);
+            var id = await FileManager.UploadImageAsync(pic);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
+
+            // await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
+            TaskHolder.DeleteTask(pic);
         }
     }
 }

@@ -20,7 +20,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task WhereAreTheBot(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            await groupMessageReceiver.SendMessageAsync("buzai,cnm");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "buzai,cnm"));
         }
         /// <summary>
         /// 和傻狗说晚安吧
@@ -34,10 +34,12 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             if (DateTime.Now.Hour > 7 && DateTime.Now.Hour < 22)
             {
-                await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},晚安锤子,起来嗨");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{groupMessageReceivedInfo.Member.Nickname},晚安锤子,起来嗨"));
+                // await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},晚安锤子,起来嗨");
             }
             else
             {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{groupMessageReceivedInfo.Member.Nickname},晚安"));
                 await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},晚安");
             }
         }
@@ -57,11 +59,13 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 var temp = groupMessageReceivedInfo.Member;
                 temp.Token -= 5;
                 await DataBaseOperator.UpdateUserInfo(temp);
-                await groupMessageReceiver.QuoteMessageAsync("我爬，我爬");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "我爬，我爬",true));
+                // await groupMessageReceiver.QuoteMessageAsync("我爬，我爬");
             }
             else
             {
-                await groupMessageReceiver.QuoteMessageAsync("我不爬，你爬");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "我不爬，你爬", true));
+                // await groupMessageReceiver.QuoteMessageAsync("我不爬，你爬");
             }
         }
         /// <summary>
@@ -79,8 +83,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 temp.Token--;
                 await DataBaseOperator.UpdateUserInfo(temp);
             }
-
-            await groupMessageReceiver.SendMessageAsync("gnk48");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "gnk48"));
+            // await groupMessageReceiver.SendMessageAsync("gnk48");
         }
         /// <summary>
         /// 贴贴！
@@ -93,11 +97,11 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             if (groupMessageReceivedInfo.Member.Token > 3000 || groupMessageReceivedInfo.Member.Permission > Permission.User)
             {
-                await groupMessageReceiver.QuoteMessageAsync("贴贴~");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "贴贴~", true));
             }
             else
             {
-                await groupMessageReceiver.QuoteMessageAsync("你寄吧谁");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你寄吧谁", true));
             }
         }
         /// <summary>
@@ -112,7 +116,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             if (groupMessageReceivedInfo.PlainMessages.Count < 2)
             {
-                await groupMessageReceiver.QuoteMessageAsync("没有找到传话内容");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "没有找到传话内容", true));
                 return;
             }
             var msg = new OwnerMessageInfo(groupMessageReceivedInfo.PlainMessages[1], groupMessageReceivedInfo.Member.UserId,
@@ -120,7 +124,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 DateTime.Now);
             var json = DataOperator.ToJsonString(msg);
             await MessageManager.SendFriendMessageAsync("2826241064", json);
-            await groupMessageReceiver.QuoteMessageAsync("已传话(有建设性意见可以直接加用户反馈群442069136)");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "已传话(有建设性意见可以直接加用户反馈群442069136)", true));
             var commentAddress = Path.Combine(StaticData.ExePath!, $"Data/Comments/{DateTime.Now:yyyy-M-dd--HH-mm-ss}.json");
             DataOperator.WriteJsonFile(commentAddress, msg);
             Logger.Log(
@@ -142,7 +146,29 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             tempmy = tempmy % date;
             tempmy = tempmy % ((400 - DateTime.Now.DayOfYear) * DateTime.Now.Month);
             var jrmy = tempmy % 101;
-            await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},你的今日霉运值为{jrmy}");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                $"{groupMessageReceivedInfo.Member.Nickname},你的今日霉运值为{jrmy}"));
+            // await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},你的今日霉运值为{jrmy}");
+        }
+        /// <summary>
+        /// 和傻狗说晚安吧
+        /// </summary>
+        /// <param name="groupMessageReceivedInfo"></param>
+        /// <param name="groupMessageReceiver"></param>
+        /// <returns></returns>
+        [ChatCommand(new string[] { "摸摸傻狗", "傻狗摸摸" }, "/touchsg")]
+        public static async Task TouchDog(GroupMessageReceivedInfo groupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (groupMessageReceivedInfo.Member.Token > 3000 || groupMessageReceivedInfo.Member.Permission > Permission.User)
+            {
+                if (UsefulMethods.IsOk(3))
+                {
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "蹭蹭", true));
+                    return;
+                }
+            }
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "小手不是很干净", true));
         }
     }
 }

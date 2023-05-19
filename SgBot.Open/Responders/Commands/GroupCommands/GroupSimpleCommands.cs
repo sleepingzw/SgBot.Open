@@ -16,7 +16,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                                            "傻狗Bot V0.3.2:\n傻狗大陆再开！公测" +
                                            "傻狗Bot V0.3.3:\n下载失败的图片会重新下载了\n增加了一些可能永远不会被发现的互动" +
                                            "傻狗Bot V0.3.4:\n自动黑名单功能回归" +
-                                           "傻狗Bot V0.4.0:\n优化消息处理队列";
+                                           "傻狗Bot V0.4.0:\n优化消息处理队列" +
+                                           "傻狗Bot V0.4.1:\n修复了一些bug";
 
         /// <summary>
         /// 查看bot的一些信息
@@ -28,7 +29,9 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task Info(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1\n感谢Mirai,Mirai.NET");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                "傻狗Bot V0.4.2\n感谢Mirai,Mirai.NET"));
+            // await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1\n感谢Mirai,Mirai.NET");
         }
         /// <summary>
         /// 查看bot最近一个版本更新了什么
@@ -40,7 +43,9 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task UpdateInfo(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
-            await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1:\n修复了一些bug");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                "傻狗Bot V0.4.2:\n优化了系统延迟"));
+            // await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1:\n修复了一些bug");
         }
         /// <summary>
         /// 呼唤bot
@@ -54,7 +59,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/CallMe.png"));
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
+            // await groupMessageReceiver.SendMessageAsync(chain);
         }
         /// <summary>
         /// 查看傻狗力排名
@@ -71,7 +77,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
 
             var id = await FileManager.UploadImageAsync(ret);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
 
             TaskHolder.DeleteTask(ret);
         }
@@ -90,7 +96,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var id = await FileManager.UploadImageAsync(Path.Combine(StaticData.ExePath!, "Data/Img/PayMe.png"));
             var chain = builder.Plain("呜呜，非常感谢").ImageFromId(id.Item1).Build();
 
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
         }
     }
 }

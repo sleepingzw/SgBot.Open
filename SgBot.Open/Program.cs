@@ -35,17 +35,31 @@ Logger.Log($"登录Bot {StaticData.BotConfig.BotQQ} 成功",LogLevel.Important);
 // await MessageManager.SendFriendMessageAsync("2826241064", "test");
 bot.MessageReceived.OfType<GroupMessageReceiver>().Subscribe(receiver=>
 {
-    var temp = new GroupInfo("temp");
-    var tempm = new UserInfo("temp");
-    //如果在黑名单内，不回复消息
+    //var temp = new GroupInfo("temp");
+    //var tempm = new UserInfo("temp");
+    ////如果在黑名单内，不回复消息
+    //Task.Run(async () =>
+    //{
+    //    temp = await DataBaseOperator.FindGroup(receiver.GroupId);
+    //    tempm = await DataBaseOperator.FindUser(receiver.Sender.Id);
+    //});
+    //if (temp.IsBanned || tempm.IsBanned)
+    //    return;
+    //ReceiverQueue.AddGroupReceiver(receiver);
     Task.Run(async () =>
     {
-        temp = await DataBaseOperator.FindGroup(receiver.GroupId);
-        tempm = await DataBaseOperator.FindUser(receiver.Sender.Id);
+        var info = await MessagePreOperator.GetGroupReceiverInfo(receiver);
+        if (!RespondLimiter.CanRespond(info.Group.GroupId, DateTime.Now))
+        {
+            return;
+        }
+        if (info.Member.IsBanned || info.Group.IsBanned)
+        {
+            return;
+        }
+        await GroupMessageResponder.Respond(info, receiver);
     });
-    if (temp.IsBanned || tempm.IsBanned)
-        return;
-    ReceiverQueue.AddGroupReceiver(receiver);
+
 });
 bot.EventReceived.OfType<NewInvitationRequestedEvent>().Subscribe(x =>
 {
@@ -84,7 +98,7 @@ bot.EventReceived.OfType<MutedEvent>().Subscribe(x =>
 bot.EventReceived.OfType<NudgeEvent>().Subscribe(x =>
 {
     if (x.Target != "939126365" || x.FromId == "939126365") return;
-    if (UsefulMethods.IsOk(2))
+    if (UsefulMethods.IsOk(3,1))
     {
         MessageManager.SendNudgeAsync(x.FromId, x.Subject.Id, MessageReceivers.Group);
     }

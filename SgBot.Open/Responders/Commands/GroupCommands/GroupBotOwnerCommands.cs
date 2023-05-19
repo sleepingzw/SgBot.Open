@@ -1,8 +1,10 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
+using SgBot.Open.DataTypes.Extra;
 using SgBot.Open.Utils.Basic;
 using SlpzLibrary;
 
@@ -23,20 +25,15 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             if (!groupReceiverInfo.IsOwner) return;
             var processName = Process.GetCurrentProcess().ProcessName;
 
-            var cpu = DeviceMonitor.GetCurrentCpuUsage();
-            var ram = DeviceMonitor.GetAvailableRam();
-            var processCpu = DeviceMonitor.GetCpuUsageByProcessName(processName);
-            var processMem = DeviceMonitor.MemoryUsingByApp(processName);
-            var threadCt = DeviceMonitor.GetThreadCount(processName);
-            var hdd = DeviceMonitor.GetHddSpace(processName);
             var currentStatus =
-                $"总CPU占用率={cpu},\r\n" +
-                $"{processName}占用的CPU={processCpu},\r\n" +
-                $"空闲可用内存={ram},\r\n" +
-                $"{processName}占用内存={processMem},\r\n" +
-                $"{processName}占用线程数={threadCt},\r\n" +
-                $"磁盘={hdd}";
-            await groupMessageReceiver.QuoteMessageAsync(currentStatus);
+                $"总CPU占用率={'%'},\r\n" +
+                $"{processName}占用的CPU={'%'},\r\n" +
+                $"空闲可用内存={DeviceMonitor.GetMemoryMetricsMetrics().Free}MB,\r\n";
+                //$"{processName}占用内存={processMem},\r\n" +
+                //$"{processName}占用线程数={threadCt},\r\n" +
+                //$"磁盘={hdd}";
+            // await groupMessageReceiver.QuoteMessageAsync(currentStatus);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, currentStatus, true));
         }
         /// <summary>
         /// 给某个人增加傻狗力
@@ -55,7 +52,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var temp = Regex.Replace(settingPara, @"[^0-9]+", "");
             targetUser.Token += int.Parse(temp);
             await DataBaseOperator.UpdateUserInfo(targetUser);
-            await groupMessageReceiver.SendMessageAsync($"ADD {targetUser.Nickname} {temp} SUCCEED");
+            //await groupMessageReceiver.SendMessageAsync($"ADD {targetUser.Nickname} {temp} SUCCEED");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"ADD {targetUser.Nickname} {temp} SUCCEED"));
         }
         /// <summary>
         /// 查看bot的全局数据
@@ -70,7 +68,19 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             if (!groupReceiverInfo.IsOwner) return;
             var ret = DataBaseOperator.GetCollectedData();
             var rr = DataBaseOperator.OutGameStatus();
-            await groupMessageReceiver.SendMessageAsync($"Setu {ret.SetuCount}\nSv {ret.SvCount}\nYydz {ret.YydzCount}\n{rr}");
+            //await groupMessageReceiver.SendMessageAsync($"Setu {ret.SetuCount}\nSv {ret.SvCount}\nYydz {ret.YydzCount}\n{rr}");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"Setu {ret.SetuCount}\nSv {ret.SvCount}\nYydz {ret.YydzCount}\n{rr}"));
+        }
+        [ChatCommand("展示全部红包", "/showredbag")]
+        public static async Task ShowRedPackage(GroupMessageReceivedInfo groupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (groupMessageReceivedInfo.IsOwner)
+            {
+
+                var ret = RedBagManager.ShowAllBag(groupMessageReceivedInfo.Group.GroupId);
+                await groupMessageReceiver.QuoteMessageAsync(ret);
+            }
         }
     }
 }

@@ -54,7 +54,8 @@ namespace SgBot.Open.Utils.Basic
 
         public static void StartQueueOut()
         {
-            ReceiverQueue.StartOutReceiver();
+            // ReceiverQueue.StartOutReceiver();
+            RespondQueue.StartOutRespond();
         }
         private static bool CheckDirectoryCreated()
         {

@@ -146,13 +146,13 @@ namespace SgBot.Open.DataTypes.SgGame
             switch (Rank)
             {
                 case Rank.D:
-                    RankScore = 50;
+                    RankScore = 80;
                     break;
                 case Rank.C:
-                    RankScore = 100;
+                    RankScore = 140;
                     break;
                 case Rank.B:
-                    RankScore = 200;
+                    RankScore = 240;
                     break;
                 case Rank.A:
                     RankScore = 400;

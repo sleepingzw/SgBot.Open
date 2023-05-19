@@ -43,14 +43,7 @@ namespace SgBot.Open.Utils.Basic
         {
             var rd = new Random();
             var a = rd.Next() % max;
-            if (a <= belowWhatIsGood)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return a <= belowWhatIsGood;
         }
         /// <summary>
         /// 生成一个随机数

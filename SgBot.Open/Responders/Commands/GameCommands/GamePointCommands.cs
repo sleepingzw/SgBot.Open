@@ -33,51 +33,51 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 var points = Regex.Replace(groupMessageReceivedInfo.PlainMessages[2], @"[^0-9]+", "");
                 if (points.IsNullOrEmpty())
                 {
-                    await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                     return;
                 }
                 var point = int.Parse(points);
                 if (point > player.FreePoints)
                 {
-                    await groupMessageReceiver.QuoteMessageAsync("自由属性点不足");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "自由属性点不足", true));
                     return;
                 }
                 switch (what)
                 {
                     case "体质":
                         player.Fitness += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点体质 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点体质 {point} 成功", true));
                         break;
                     case "敏捷":
                         player.Agility += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点敏捷 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点敏捷 {point} 成功", true));
                         break;
                     case "力量":
                         player.Strength += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点力量 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点力量 {point} 成功", true));
                         break;
                     case "智力":
                         player.Intelligence += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点智力 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点智力 {point} 成功", true));
                         break;
                     case "fit":
                         player.Fitness += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点体质 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点体质 {point} 成功", true));
                         break;
                     case "agi":
                         player.Agility += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点敏捷 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点敏捷 {point} 成功", true));
                         break;
                     case "str":
                         player.Strength += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点力量 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点力量 {point} 成功", true));
                         break;
                     case "int":
                         player.Intelligence += point;
-                        await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id})加点智力 {point} 成功");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id})加点智力 {point} 成功", true));
                         break;
                     default:
-                        await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                        RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                         return;
                 }
                 player.FreePoints -= point;
@@ -85,7 +85,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             }
             else
             {
-                await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
             }
         }
         /// <summary>
@@ -102,7 +102,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Refresh();
             if (player.Coin < 100 * player.Level)
             {
-                await groupMessageReceiver.QuoteMessageAsync("金币不足 需要 100*玩家等级 金币洗点");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "金币不足 需要 100*玩家等级 金币洗点", true));
                 return;
             }
 
@@ -115,7 +115,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Intelligence = 1;
 
             await DataBaseOperator.UpdatePlayer(player);
-            await groupMessageReceiver.QuoteMessageAsync($"洗点成功 洗点后等级 Lv.{player.Level} 自由属性点 {player.FreePoints}点");
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"洗点成功 洗点后等级 Lv.{player.Level} 自由属性点 {player.FreePoints}点", true));
         }
     }
 }

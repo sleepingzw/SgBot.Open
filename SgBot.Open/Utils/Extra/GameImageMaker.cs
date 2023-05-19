@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using SgBot.Open.DataTypes.StaticData;
 using SgBot.Open.Utils.Basic;
 using Manganese.Text;
+using System.Numerics;
 
 namespace SgBot.Open.Utils.Extra
 {
@@ -541,6 +542,117 @@ namespace SgBot.Open.Utils.Extra
                 {
                     return ret;
                 }
+                using (var image = surface.Snapshot())
+                using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
+                using (var stream = File.OpenWrite(ret))
+                {
+                    data.SaveTo(stream);
+                }
+
+                Logger.Log($"Img {ret} 生成成功", LogLevel.Simple);
+                return ret;
+            }
+        }
+
+        public static string MakeOtherInfoImage(Player player)
+        {
+            var skInfo = new SKImageInfo(360, 190);
+            using (var surface = SKSurface.Create(skInfo))
+            {
+                using var glCanvas = surface.Canvas;
+                var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
+                var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
+                // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
+                using var skFont = new SKFont(skTypeface, 20);
+                using var skTextPaint = new SKPaint
+                {
+                    Color = SKColors.Black,
+                    TextEncoding = SKTextEncoding.Utf8,
+                    Typeface = skTypeface,
+                    TextSize = 18,
+                    IsAntialias = true
+                };
+                using var skSmallPaint = new SKPaint
+                {
+                    Color = SKColors.Black,
+                    TextEncoding = SKTextEncoding.Utf8,
+                    Typeface = skTypeface,
+                    TextSize = 12,
+                    IsAntialias = true
+                };
+                glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
+
+                glCanvas.DrawText($"{player.Name}({player.Id}):", 3f, 25, skTextPaint);
+                glCanvas.DrawText($"Lv.{player.Level} Rk.{player.Rank}", 3f, 45, skTextPaint);
+
+                var array = new long[4];
+                array[0] = player.Strength;
+                array[1] = player.Fitness;
+                array[2] = player.Agility;
+                array[3] = player.Intelligence;
+                var max = array.Max();
+                var num = array.TakeWhile(ii => ii != max).Count();
+
+                switch (num)
+                {
+                    case 0:
+                        glCanvas.DrawText("主属性为力量", 3f, 65, skTextPaint);
+                        break;
+                    case 1:
+                        glCanvas.DrawText("主属性为体制", 3f, 65, skTextPaint);
+                        break;
+                    case 2:
+                        glCanvas.DrawText("主属性为敏捷", 3f, 65, skTextPaint);
+                        break;
+                    case 3:
+                        glCanvas.DrawText("主属性为智力", 3f, 65, skTextPaint);
+                        break;
+                    default:
+                        break;
+                }
+
+                var onBody = player.Bag.Where(equip => equip.OnBody).ToList();
+                var lines = 1;
+                if (onBody.Count != 0)
+                {
+                    glCanvas.DrawText($"当前装备:", 3f, 85, skTextPaint);
+                    var i = 0;
+                    foreach (var it in onBody)
+                    {
+                        i++;
+                        switch (it.Category)
+                        {
+                            case EquipmentCategory.Weapon:
+                                glCanvas.DrawText($"武器:{it.Name}".PadRight(15) + $"Rk.{it.Level}", 3, 85 + 20 * lines,
+                                    skTextPaint);
+                                lines++;
+                                break;
+                            case EquipmentCategory.Armor:
+                                glCanvas.DrawText($"防具:{it.Name}".PadRight(15) + $"Rk.{it.Level}", 3, 85 + 20 * lines,
+                                    skTextPaint);
+                                lines++;
+                                break;
+                            case EquipmentCategory.Jewelry:
+                                glCanvas.DrawText($"饰品:{it.Name}".PadRight(15) + $"Rk.{it.Level}", 3, 85 + 20 * lines,
+                                    skTextPaint);
+                                lines++;
+                                break;
+                        }
+                    }
+                }
+                else
+                {
+                    glCanvas.DrawText($"当前装备: 无装备", 3f, 125, skTextPaint);
+                }
+
+                glCanvas.DrawText(
+                    player.SkillActive.Count != 0
+                        ? $"当前技能:{SkillLibrary.Skills[player.SkillActive[0]].Name}"
+                        : "当前技能:无技能", 3f,
+                    165, skTextPaint);
+
+                var ret = Path.Combine(StaticData.ExePath!,
+                    $"Data/Temp/OtherInfoTempImage/{player.Id}-{DateTime.Now:yyyy-M-dd--HH-mm-ss-ff}.png");
                 using (var image = surface.Snapshot())
                 using (var data = image.Encode(SKEncodedImageFormat.Png, 100))
                 using (var stream = File.OpenWrite(ret))

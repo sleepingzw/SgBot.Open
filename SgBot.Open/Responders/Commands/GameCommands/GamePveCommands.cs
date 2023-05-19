@@ -38,13 +38,13 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 }
                 else
                 {
-                    await groupMessageReceiver.QuoteMessageAsync("参数错误");
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
                     return;
                 }
             }
             if (times > 20)
             {
-                await groupMessageReceiver.QuoteMessageAsync("最多一次20把");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "最多一次20把", true));
                 return;
             }
             var player = await DataBaseOperator.FindPlayer(groupMessageReceivedInfo.Member.UserId);
@@ -74,7 +74,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             }
             else
             {
-                await groupMessageReceiver.QuoteMessageAsync("体力不足");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "体力不足", true));
             }
         }
     }

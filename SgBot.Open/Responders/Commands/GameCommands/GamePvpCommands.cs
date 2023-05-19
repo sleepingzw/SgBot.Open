@@ -32,7 +32,8 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Refresh();
             if (player.Power < 1)
             {
-                await groupMessageReceiver.QuoteMessageAsync("体力不足");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "体力不足", true));
+                // await groupMessageReceiver.QuoteMessageAsync("体力不足");
                 return;
             }
 
@@ -91,8 +92,8 @@ namespace SgBot.Open.Responders.Commands.GameCommands
 
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
+            // await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
 
@@ -108,7 +109,8 @@ namespace SgBot.Open.Responders.Commands.GameCommands
         {
             if (groupMessageReceivedInfo.AtMessages.Count == 0)
             {
-                await groupMessageReceiver.QuoteMessageAsync("没有决斗对象");
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "没有决斗对象", true));
+                // await groupMessageReceiver.QuoteMessageAsync("没有决斗对象");
                 return;
             }
 
@@ -130,8 +132,8 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             var pic = GameImageMaker.MakePVPBattleImage(log, player.Id, result);
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
-
-            await groupMessageReceiver.SendMessageAsync(chain);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
+            // await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
     }

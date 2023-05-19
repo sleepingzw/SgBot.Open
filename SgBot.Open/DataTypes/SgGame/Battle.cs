@@ -65,11 +65,11 @@ namespace SgBot.Open.DataTypes.SgGame
                         value = 100;
 
                     }
+
                     if (value < 20)
                     {
                         value = 20;
                     }
-                    Console.WriteLine(value);
                     foreach (var skill in fastUnit.Skills.Where(skill => UsefulMethods.IsOk(100, (int)value)))
                     {
                         if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;

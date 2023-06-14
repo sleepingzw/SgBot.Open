@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using System.Text.RegularExpressions;
+using Microsoft.EntityFrameworkCore;
 using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Utils.Scaffolds;
@@ -52,8 +53,26 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var temp = Regex.Replace(settingPara, @"[^0-9]+", "");
             targetUser.Token += int.Parse(temp);
             await DataBaseOperator.UpdateUserInfo(targetUser);
-            //await groupMessageReceiver.SendMessageAsync($"ADD {targetUser.Nickname} {temp} SUCCEED");
-            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"ADD {targetUser.Nickname} {temp} SUCCEED"));
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"ADD {targetUser.Nickname} {temp} TOKEN SUCCEED"));
+        }
+        /// <summary>
+        /// 给别人送傻狗牌
+        /// </summary>
+        /// <param name="groupReceiverInfo"></param>
+        /// <param name="groupMessageReceiver"></param>
+        /// <returns></returns>
+        [ChatCommand("加傻狗牌", "/addcard")]
+        public static async Task OwnerSendCard(GroupMessageReceivedInfo groupReceiverInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (!groupReceiverInfo.IsOwner) return;
+            var target = groupReceiverInfo.AtMessages[0].Target;
+            var targetUser = await DataBaseOperator.FindUser(target);
+            var settingPara = groupReceiverInfo.PlainMessages[1];
+            var temp = Regex.Replace(settingPara, @"[^0-9]+", "");
+            targetUser.Card += int.Parse(temp);
+            await DataBaseOperator.UpdateUserInfo(targetUser);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"ADD {targetUser.Nickname} {temp} CARD SUCCEED"));
         }
         /// <summary>
         /// 查看bot的全局数据
@@ -81,6 +100,18 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 var ret = RedBagManager.ShowAllBag(groupMessageReceivedInfo.Group.GroupId);
                 await groupMessageReceiver.QuoteMessageAsync(ret);
             }
+        }
+        [ChatCommand("重置玩家每日状态", "/freshplayer")]
+        public static async Task RefreshPlayer(GroupMessageReceivedInfo groupReceiverInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (!groupReceiverInfo.IsOwner) return;
+            var target = groupReceiverInfo.AtMessages[0].Target;
+            var targetPlayer = await DataBaseOperator.FindPlayer(target);
+            targetPlayer.IsWinToday = false;
+            targetPlayer.IsHitBoss=false;
+            await DataBaseOperator.UpdatePlayer(targetPlayer);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{targetPlayer.Id} REFRESH"));
         }
     }
 }

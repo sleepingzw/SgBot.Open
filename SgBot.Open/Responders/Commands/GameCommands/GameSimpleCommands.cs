@@ -110,7 +110,6 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Name = name;
             await DataBaseOperator.UpdatePlayer(player);
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{player.Name}({player.Id}) 改名成功", true));
-            // await groupMessageReceiver.QuoteMessageAsync($"{player.Name}({player.Id}) 改名成功");
         }
         /// <summary>
         /// 查询别人信息
@@ -133,7 +132,6 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
 
-            // await groupMessageReceiver.SendMessageAsync(chain);
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
             TaskHolder.DeleteTask(pic);
         }

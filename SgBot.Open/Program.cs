@@ -6,6 +6,7 @@ using Mirai.Net.Data.Events.Concretes.Group;
 using Mirai.Net.Data.Events.Concretes.Message;
 using Mirai.Net.Data.Events.Concretes.Request;
 using Mirai.Net.Data.Messages;
+using Mirai.Net.Data.Messages.Concretes;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Data.Shared;
 using Mirai.Net.Sessions;
@@ -32,20 +33,12 @@ await bot.LaunchAsync();
 Initializer.StartQueueOut();
 
 Logger.Log($"登录Bot {StaticData.BotConfig.BotQQ} 成功",LogLevel.Important);
-// await MessageManager.SendFriendMessageAsync("2826241064", "test");
+
+// await MessageManager.SendFriendMessageAsync("2826241064", "bot已经登录");
+
 bot.MessageReceived.OfType<GroupMessageReceiver>().Subscribe(receiver=>
 {
-    //var temp = new GroupInfo("temp");
-    //var tempm = new UserInfo("temp");
-    ////如果在黑名单内，不回复消息
-    //Task.Run(async () =>
-    //{
-    //    temp = await DataBaseOperator.FindGroup(receiver.GroupId);
-    //    tempm = await DataBaseOperator.FindUser(receiver.Sender.Id);
-    //});
-    //if (temp.IsBanned || tempm.IsBanned)
-    //    return;
-    //ReceiverQueue.AddGroupReceiver(receiver);
+    // Logger.Log("message received",LogLevel.Simple);
     Task.Run(async () =>
     {
         var info = await MessagePreOperator.GetGroupReceiverInfo(receiver);

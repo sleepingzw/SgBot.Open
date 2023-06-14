@@ -9,7 +9,7 @@ namespace SgBot.Open.Utils.Basic
 {
     internal static class Logger
     {
-        public static void Log(string what, LogLevel level)
+        public static void Log(string what, LogLevel level=LogLevel.Simple)
         {
             try
             {

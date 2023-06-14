@@ -17,7 +17,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                                            "傻狗Bot V0.3.3:\n下载失败的图片会重新下载了\n增加了一些可能永远不会被发现的互动" +
                                            "傻狗Bot V0.3.4:\n自动黑名单功能回归" +
                                            "傻狗Bot V0.4.0:\n优化消息处理队列" +
-                                           "傻狗Bot V0.4.1:\n修复了一些bug";
+                                           "傻狗Bot V0.4.1:\n修复了一些bug" +
+                                           "傻狗Bot V0.4.2:\n优化了系统延迟";
 
         /// <summary>
         /// 查看bot的一些信息
@@ -30,7 +31,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             GroupMessageReceiver groupMessageReceiver)
         {
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
-                "傻狗Bot V0.4.2\n感谢Mirai,Mirai.NET"));
+                "傻狗Bot V0.4.3\n感谢Mirai,Mirai.NET"));
             // await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1\n感谢Mirai,Mirai.NET");
         }
         /// <summary>
@@ -44,7 +45,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             GroupMessageReceiver groupMessageReceiver)
         {
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
-                "傻狗Bot V0.4.2:\n优化了系统延迟"));
+                "傻狗Bot V0.4.3:\n更新了傻狗牌系统"));
             // await groupMessageReceiver.SendMessageAsync("傻狗Bot V0.4.1:\n修复了一些bug");
         }
         /// <summary>
@@ -68,7 +69,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         /// <param name="groupMessageReceivedInfo"></param>
         /// <param name="groupMessageReceiver"></param>
         /// <returns></returns>
-        [ChatCommand("傻狗排名", "/sgsort")]
+        [ChatCommand(new string[] { "傻狗排名", "傻狗排行", "傻狗总榜" }, "/sgsort")]
         public static async Task TokenSort(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {

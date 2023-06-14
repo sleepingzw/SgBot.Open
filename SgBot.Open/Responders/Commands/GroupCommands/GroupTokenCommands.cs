@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using Manganese.Text;
 using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Sessions.Http.Managers;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.StaticData;
@@ -92,6 +93,19 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             //await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},您的傻狗力数量为{groupMessageReceivedInfo.Member.Token}");
         }
         /// <summary>
+        /// 查询自己有多少傻狗牌
+        /// </summary>
+        /// <param name="groupMessageReceivedInfo"></param>
+        /// <param name="groupMessageReceiver"></param>
+        /// <returns></returns>
+        [ChatCommand(new string[] { "查询傻狗牌", "傻狗牌查询" }, "/inquirecard")]
+        public static async Task CardSearch(GroupMessageReceivedInfo groupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                $"{groupMessageReceivedInfo.Member.Nickname},您的傻狗牌数量为{groupMessageReceivedInfo.Member.Card}张"));
+        }
+        /// <summary>
         /// 将傻狗力转给其他人
         /// </summary>
         /// <param name="groupMessageReceivedInfo"></param>
@@ -147,6 +161,56 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
 
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
 
+        }
+        /// <summary>
+        /// 抽傻狗牌
+        /// </summary>
+        /// <param name="groupMessageReceivedInfo"></param>
+        /// <param name="groupMessageReceiver"></param>
+        /// <returns></returns>
+        [ChatCommand(new string[] { "翻傻狗牌", "随机狗牌" }, "/drawdogcard")]
+        public static async Task DrawDogCard(GroupMessageReceivedInfo groupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (groupMessageReceivedInfo.Member.Card == 0)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你没有傻狗牌可以翻,每日傻狗大陆pvp首胜可以获得傻狗牌", true));
+                return;
+            }
+            if (groupMessageReceivedInfo.Member.Token < 90)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "你没有足够傻狗力，开启一次傻狗牌需要90傻狗力", true));
+                return;
+            }
+            var rd = new Random((int)DateTime.Now.Ticks);
+            var cardList = new int[9];
+            for (var i = 0; i < 9; i++)
+            {
+                cardList[i] = rd.Next() % 1000;
+            }
+            var tokenGet = 0;
+            for (var i = 0; i < 9; i++)
+            {
+                tokenGet += cardList[i] switch
+                {
+                    < 600 => 2,
+                    < 850 => 10,
+                    < 950 => 40,
+                    < 990 => 100,
+                    _ => 1000
+                };
+            }
+            groupMessageReceivedInfo.Member.Token -= 90;
+            groupMessageReceivedInfo.Member.Token += tokenGet;
+            groupMessageReceivedInfo.Member.Card -= 1;
+            await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
+            var ret = ImageMaker.MakeCardImage(groupMessageReceivedInfo.Member.UserId, cardList);
+            var id = await FileManager.UploadImageAsync(ret);
+            var chain = new MessageChainBuilder().ImageFromId(id.Item1)
+                .Plain($"{groupMessageReceivedInfo.Member.Nickname},消耗90傻狗力翻牌,翻出{tokenGet}傻狗力,你现在有{groupMessageReceivedInfo.Member.Token}傻狗力了").Build();
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
+
+            TaskHolder.DeleteTask(ret);
         }
     }
 }

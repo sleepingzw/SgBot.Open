@@ -73,21 +73,18 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             if (GroupMessageReceivedInfo.PlainMessages.Count < 2)
             {
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
-                // await groupMessageReceiver.QuoteMessageAsync("参数错误");
                 return;
             }
             var temp = Regex.Replace(GroupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
             if (temp.IsNullOrEmpty())
             {
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
-                // await groupMessageReceiver.QuoteMessageAsync("参数错误");
                 return;
             }
             var what = int.Parse(temp);
             if (what == 0)
             {
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "数值不能为0", true));
-                // await groupMessageReceiver.QuoteMessageAsync("数值不能为0");
                 return;
             }
             var player = await DataBaseOperator.FindPlayer(GroupMessageReceivedInfo.Member.UserId);
@@ -97,7 +94,6 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             {
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"傻狗力不足{what} 1傻狗力可以兑换（玩家等级）金币",
                     true));
-                // await groupMessageReceiver.QuoteMessageAsync($"傻狗力不足{what} 1傻狗力可以兑换（玩家等级）金币");
                 return;
             }
 

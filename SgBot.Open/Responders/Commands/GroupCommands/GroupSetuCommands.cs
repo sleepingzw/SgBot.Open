@@ -20,6 +20,10 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task SetuSearch(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
+            if (groupMessageReceivedInfo.Group.CanSetu == false)
+            {
+                return;
+            }
             if (groupMessageReceivedInfo.Member.Token > 0)
             {
                 groupMessageReceivedInfo.Member.Token--;
@@ -108,6 +112,10 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         public static async Task SetuSearchTag(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {
+            if (groupMessageReceivedInfo.Group.CanSetu == false)
+            {
+                return;
+            }
             if (groupMessageReceivedInfo.Member.Token > 0)
             {
                 groupMessageReceivedInfo.Member.Token--;
@@ -195,6 +203,10 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         [ChatCommand(new string[] { "色图时间", "涩图时间", "来点色图", "来点涩图" }, "/setu")]
         public static async Task Setu(GroupMessageReceivedInfo groupMessageReceivedInfo, GroupMessageReceiver groupMessageReceiver)
         {
+            if (groupMessageReceivedInfo.Group.CanSetu == false)
+            {
+                return;
+            }
             if (groupMessageReceivedInfo.Member.Token > 0)
             {
                 groupMessageReceivedInfo.Member.Token--;

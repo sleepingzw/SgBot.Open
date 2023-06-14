@@ -16,7 +16,7 @@ namespace SgBot.Open.Utils.Basic
         /// </summary>
         /// <param name="path">文件的路径</param>
         /// <param name="delay">延时的时间，默认500毫秒</param>
-        public static void DeleteTask(string path,int delay=500)
+        public static void DeleteTask(string path,int delay=5000)
         {
             Task.Run(() =>
             {

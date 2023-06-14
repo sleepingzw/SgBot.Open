@@ -40,7 +40,6 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             else
             {
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{groupMessageReceivedInfo.Member.Nickname},晚安"));
-                await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},晚安");
             }
         }
         /// <summary>
@@ -151,7 +150,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             // await groupMessageReceiver.SendMessageAsync($"{groupMessageReceivedInfo.Member.Nickname},你的今日霉运值为{jrmy}");
         }
         /// <summary>
-        /// 和傻狗说晚安吧
+        /// 摸摸傻狗
         /// </summary>
         /// <param name="groupMessageReceivedInfo"></param>
         /// <param name="groupMessageReceiver"></param>
@@ -162,6 +161,11 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
         {
             if (groupMessageReceivedInfo.Member.Token > 3000 || groupMessageReceivedInfo.Member.Permission > Permission.User)
             {
+                if (groupMessageReceivedInfo.Member.Permission > Permission.Admin)
+                {
+                    RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "蹭蹭", true));
+                    return;
+                }
                 if (UsefulMethods.IsOk(3))
                 {
                     RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "蹭蹭", true));

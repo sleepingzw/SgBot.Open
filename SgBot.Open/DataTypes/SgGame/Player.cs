@@ -24,6 +24,7 @@ namespace SgBot.Open.DataTypes.SgGame
         public Rank Rank { get; set; }
         public int RankScore { get; set; }
         public bool IsHitBoss { get; set; }
+        public bool IsWinToday { get; set; }
         public int BuyPowerTime { get; set; }
         public long Strength { get; set; } // 影响物理伤害，破甲值
         public long Intelligence { get; set; } //影响魔法伤害，护盾值
@@ -160,6 +161,9 @@ namespace SgBot.Open.DataTypes.SgGame
                 case Rank.AA:
                     RankScore = 800;
                     break;
+                case Rank.GM:
+                    RankScore = 1600;
+                    break;
                 default: break;
             }
             return true;
@@ -194,6 +198,7 @@ namespace SgBot.Open.DataTypes.SgGame
             Power = 20;
             PowerDay = DateTime.Now.Day;
             IsHitBoss = false;
+            IsWinToday = false;
             BuyPowerTime = 0;
             return true;
         }

@@ -56,6 +56,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var which = int.Parse(Regex.Replace(groupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", ""));
             var status = RedBagManager.GetRedBag(groupMessageReceivedInfo.Group.GroupId, which,
                 groupMessageReceivedInfo.Member.UserId);
+
             switch (status)
             {
                 case RedBagStatus.CouldNotFind:

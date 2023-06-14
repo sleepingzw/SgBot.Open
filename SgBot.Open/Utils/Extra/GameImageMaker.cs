@@ -49,6 +49,7 @@ namespace SgBot.Open.Utils.Extra
                 glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
 
                 glCanvas.DrawText($"{player.Name}({player.Id}):", 3f, 25, skTextPaint);
+                glCanvas.DrawText(player.IsWinToday ? "今日已获得首胜" : "今日未获得首胜", 350f, 25, skTextPaint);
                 glCanvas.DrawText($"Lv.{player.Level} Rk.{player.Rank} RkScore:{player.RankScore}", 3f, 45, skTextPaint);
                 glCanvas.DrawText($"Exp:{player.Exp},金币:{player.Coin},体力：{player.Power}", 3f, 65, skTextPaint);
                 glCanvas.DrawText(

@@ -16,6 +16,7 @@ namespace SgBot.Open.DataTypes.BotFunction
         public Permission Permission { get; set; }
         public bool IsBanned { get; set; }
         public int FeedTime { get; set; }
+        public int Card { get; set; }
 
         public UserInfo(string userId)
         {
@@ -24,6 +25,8 @@ namespace SgBot.Open.DataTypes.BotFunction
             Token = 0;
             Permission = Permission.User;
             IsBanned = false;
+            FeedTime = 0;
+            Card = 0;
         }
     }
     public enum Permission

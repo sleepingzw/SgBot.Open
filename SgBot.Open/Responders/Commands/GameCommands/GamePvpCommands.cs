@@ -33,7 +33,6 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             if (player.Power < 1)
             {
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "体力不足", true));
-                // await groupMessageReceiver.QuoteMessageAsync("体力不足");
                 return;
             }
 
@@ -44,6 +43,37 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             SgGamePvpResult result;
             if (log.IsWin)
             {
+                if (!player.IsWinToday)
+                {
+                    // Logger.Log("shou sheng",LogLevel.Simple);
+                    player.IsWinToday = true;
+                    switch (player.Rank)
+                    {
+                        case Rank.D:
+                            groupMessageReceivedInfo.Member.Card += 1;
+                            break;
+                        case Rank.C:
+                            groupMessageReceivedInfo.Member.Card += 2;
+                            break;
+                        case Rank.B:
+                            groupMessageReceivedInfo.Member.Card += 3;
+                            break;
+                        case Rank.A:
+                            groupMessageReceivedInfo.Member.Card += 4;
+                            break;
+                        case Rank.AA:
+                            groupMessageReceivedInfo.Member.Card += 5;
+                            break;
+                        case Rank.M:
+                            groupMessageReceivedInfo.Member.Card += 6;
+                            break;
+                        case Rank.GM:
+                            groupMessageReceivedInfo.Member.Card += 7;
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 var expGet = (long)((player.Level + enemy.Level) * 8 * UsefulMethods.MakeRandom(110, 90) / 100);
                 var coinGet = (long)((player.Level + enemy.Level) * 1.3 * UsefulMethods.MakeRandom(110, 90) / 100);
                 var rankGet = player.RankScore > enemy.RankScore ? 10 : 15;
@@ -86,14 +116,13 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                     IsUpgrade = isLevelUp
                 };
             }
-
+            await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
             await DataBaseOperator.UpdatePlayer(player);
             var pic = GameImageMaker.MakePVPBattleImage(log, player.Id, result);
 
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
-            // await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
 
@@ -110,7 +139,6 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             if (groupMessageReceivedInfo.AtMessages.Count == 0)
             {
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "没有决斗对象", true));
-                // await groupMessageReceiver.QuoteMessageAsync("没有决斗对象");
                 return;
             }
 
@@ -133,7 +161,6 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             var id = await FileManager.UploadImageAsync(pic);
             var chain = new MessageChainBuilder().ImageFromId(id.Item1).Build();
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, chain));
-            // await groupMessageReceiver.SendMessageAsync(chain);
             TaskHolder.DeleteTask(pic);
         }
     }

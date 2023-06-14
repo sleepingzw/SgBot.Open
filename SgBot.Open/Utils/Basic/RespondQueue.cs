@@ -52,7 +52,7 @@ namespace SgBot.Open.Utils.Basic
             _outRespondThread = new Thread(OutRespond);
             _outRespondThread.Start();
         }
-        private static async void OutRespond()
+        private static void OutRespond()
         {
             while (true)
             {
@@ -60,18 +60,6 @@ namespace SgBot.Open.Utils.Basic
                 {
                     if (GroupMessageRespondQueue.TryDequeue(out var result))
                     {
-                        //_ = Task.Run(async () =>
-                        //{
-                        //    if (result.IsQuote)
-                        //    {
-                        //        await result.Receiver.QuoteMessageAsync(result.Chain);
-                        //    }
-                        //    else
-                        //    {
-                        //        await result.Receiver.SendMessageAsync(result.Chain);
-                        //    }
-                        //    Logger.Log($"队列剩余消息{GroupMessageRespondQueue.Count}", LogLevel.Simple);
-                        //});
                         _ = result.IsQuote ? result.Receiver.QuoteMessageAsync(result.Chain) : result.Receiver.SendMessageAsync(result.Chain);
                         Logger.Log($"队列剩余消息{GroupMessageRespondQueue.Count}", LogLevel.Simple);
                     }

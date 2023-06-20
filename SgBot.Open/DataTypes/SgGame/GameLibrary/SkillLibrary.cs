@@ -20,28 +20,55 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
 
     public abstract class Skill
     {
-        protected Skill(string name, string description, string action)
+        protected Skill(string name, string description, string action, SkillTypeEnum skillType = SkillTypeEnum.Active)
         {
             Name = name;
             Description = description;
             Action = action;
+            SkillType = skillType;
         }
 
         public string Name { get; set; }
         public string Description { get; set; }
         public string Action { get; set; }
-        public abstract BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit,int skillLevel);
+        public SkillTypeEnum SkillType { get; set; }
+        public abstract BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit,int skillLevel, SkillTypeEnum type);
+
+        public enum SkillTypeEnum
+        {
+            Passive,
+            Active
+
+        }
     }
     // 天地闪耀傻狗之星
     public class GodAttack : Skill
     {
-        public override BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel)
+        public override BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
         {
+            if (type != SkillType)
+            {
+                return unit;
+            }
             enemyUnit.Hp -= 114514;
             Action = "随手一击，造成了114514真实伤害";
             return unit;
         }
         public GodAttack() : base("天地闪耀傻狗之星", "傻狗一击", ""){}
+    }
+    public class HotBlood : Skill
+    {
+        public override BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
+        {
+            if (type != SkillType)
+            {
+                return unit;
+            }
+            enemyUnit.Hp -= 114514;
+            Action = "热血！";
+            return unit;
+        }
+        public HotBlood() : base("热血战魂", "心中的热血,每次攻击后攻速增加9%", "",SkillTypeEnum.Passive) { }
     }
     // 奶一口
     //public class HealMyself : Skill
@@ -61,7 +88,7 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
     //        }
     //        much = unit.MaxHp - org;
     //        ISkill.Action = $"回复了{org}的生命!";
-            
+
     //        return unit;
     //    }
     //}

@@ -47,16 +47,18 @@ namespace SgBot.Open.DataTypes.SgGame
 
         public double SkillActiveProbability;
         public List<int> Skills;
+        public List<Buff> Buffs;
 
         public BattleUnit(Player player)
         {
+            Buffs=new List<Buff>();
             TempHpMax = 90 + Math.Atan((double)player.Fitness / 200) * 2100;
             TempSdMax = 16 + Math.Atan((double)player.Intelligence / 300) * 2100;
 
             // 计算agi转化出来的速度 每10递减0.91
             long st = player.Agility / 10;
             var agi = player.Agility;
-            List<long> agis = new List<long>();
+            var agis = new List<long>();
             for (var i = 0; i < st; i++)
             {
                 agis.Add(10);
@@ -140,6 +142,42 @@ namespace SgBot.Open.DataTypes.SgGame
             CriticalProbabilityBattle = CriticalProbabilityOrigin;
             CriticalDamageBattle = CriticalDamageOrigin;
             SwiftBattle = SwiftOrigin;
+        }
+    }
+
+    public class Buff
+    {
+        public double BattleSpeed;
+
+        public double PhysicalAtkBattle;
+
+        public double MagicAtkBattle;
+
+        public double PhysicalDefBattle;
+
+        public double MagicDefBattle;
+
+        public double CriticalProbabilityBattle;
+
+        public double CriticalDamageBattle;
+
+        public double SwiftBattle;
+
+        public double SkillActiveProbability;
+
+        public Buff(double battleSpeed, double physicalAtkBattle, double magicAtkBattle, double physicalDefBattle,
+            double magicDefBattle, double criticalProbabilityBattle, double criticalDamageBattle, double swiftBattle,
+            double skillActiveProbability)
+        {
+            BattleSpeed = battleSpeed;
+            PhysicalAtkBattle = physicalAtkBattle;
+            MagicAtkBattle = magicAtkBattle;
+            PhysicalDefBattle = physicalDefBattle;
+            MagicDefBattle = magicDefBattle;
+            CriticalProbabilityBattle = criticalProbabilityBattle;
+            CriticalDamageBattle = criticalDamageBattle;
+            SwiftBattle = swiftBattle;
+            SkillActiveProbability = skillActiveProbability;
         }
     }
 }

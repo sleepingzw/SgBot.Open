@@ -133,11 +133,13 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                                             {
                                                 ret = "参数不合法,应该大于10分之一";
                                             }
-
-                                            groupReceiverInfo.Group.RepeatFrequency = rf;
-                                            await DataBaseOperator.UpdateGroupInfo(groupReceiverInfo.Group);
-                                            // await groupMessageReceiver.QuoteMessageAsync($"设置成功,当前复读频率为{rf}分之一");
-                                            ret = $"设置成功,当前复读频率为{rf}分之一";
+                                            else
+                                            {
+                                                groupReceiverInfo.Group.RepeatFrequency = rf;
+                                                await DataBaseOperator.UpdateGroupInfo(groupReceiverInfo.Group);
+                                                // await groupMessageReceiver.QuoteMessageAsync($"设置成功,当前复读频率为{rf}分之一");
+                                                ret = $"设置成功,当前复读频率为{rf}分之一";
+                                            }
                                         }
                                         else
                                         {
@@ -298,7 +300,6 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             }
             else
             {
-                await groupMessageReceiver.SendMessageAsync("您无操作权限");
                 ret = "您无操作权限";
             }
 

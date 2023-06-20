@@ -45,6 +45,7 @@ namespace SgBot.Open.DataTypes.SgGame
             var round = 1;
             while (fastUnit.Hp > 0 && slowUnit.Hp > 0)
             {
+                
                 fastUnit.Refresh();
                 slowUnit.Refresh();
 
@@ -55,6 +56,9 @@ namespace SgBot.Open.DataTypes.SgGame
 
                 var skillActiveLog = "";
                 var isCrit = false;
+
+
+
                 if (speedFlag >= 1) // 速度高的攻击
                 {
                     speedFlag--;
@@ -63,9 +67,7 @@ namespace SgBot.Open.DataTypes.SgGame
                     if (value > 100)
                     {
                         value = 100;
-
                     }
-
                     if (value < 20)
                     {
                         value = 20;
@@ -73,7 +75,7 @@ namespace SgBot.Open.DataTypes.SgGame
                     foreach (var skill in fastUnit.Skills.Where(skill => UsefulMethods.IsOk(100, (int)value)))
                     {
                         if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
-                        fastUnit = whatSkill.ActiveSkill(fastUnit, ref slowUnit, 1);
+                        fastUnit = whatSkill.ActiveSkill(fastUnit, ref slowUnit, 1,Skill.SkillTypeEnum.Active);
                         skillActiveLog += $"{whatSkill.Name} 发动! {fname}{whatSkill.Action}";
                         break;
                     }
@@ -223,7 +225,7 @@ namespace SgBot.Open.DataTypes.SgGame
                             ret.Details.Add(detail);
                         }
                     }
-
+                    //被动技能生效
                 }
                 else // 速度低的攻击
                 {
@@ -242,7 +244,7 @@ namespace SgBot.Open.DataTypes.SgGame
                     foreach (var skill in slowUnit.Skills.Where(skill => UsefulMethods.IsOk(100, (int)value)))
                     {
                         if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
-                        slowUnit = whatSkill.ActiveSkill(slowUnit, ref fastUnit, 1);
+                        slowUnit = whatSkill.ActiveSkill(slowUnit, ref fastUnit, 1, Skill.SkillTypeEnum.Active);
                         skillActiveLog += $"{whatSkill.Name} 发动! {sname}{whatSkill.Description}";
                         break;
                     }
@@ -390,13 +392,12 @@ namespace SgBot.Open.DataTypes.SgGame
                             ret.Details.Add(detail);
                         }
                     }
-
+                    //被动技能生效
                 }
 
                 speed = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
                 round++;
             }
-
             if (fastUnit.Hp <= 0)
             {
                 ret.IsWin = !isPlayerFast;
@@ -405,7 +406,6 @@ namespace SgBot.Open.DataTypes.SgGame
             {
                 ret.IsWin = isPlayerFast;
             }
-
             ret.PlayerName = playerp.Name;
             ret.EnemyName = enemyp.Name;
 

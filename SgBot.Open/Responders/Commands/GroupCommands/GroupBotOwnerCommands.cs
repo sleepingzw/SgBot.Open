@@ -53,6 +53,26 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 $"ADD {targetUser.Nickname} {temp} TOKEN SUCCEED"));
         }
         /// <summary>
+        /// 给某个人增加金币
+        /// </summary>
+        /// <param name="groupReceiverInfo"></param>
+        /// <param name="groupMessageReceiver"></param>
+        /// <returns></returns>
+        [ChatCommand("赠送金币", "/addcoin")]
+        public static async Task OwnerSendCoin(GroupMessageReceivedInfo groupReceiverInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (!groupReceiverInfo.IsOwner) return;
+            var target = groupReceiverInfo.AtMessages[0].Target;
+            var targetPlayer = await DataBaseOperator.FindPlayer(target);
+            var settingPara = groupReceiverInfo.PlainMessages[1];
+            var temp = Regex.Replace(settingPara, @"[^0-9]+", "");
+            targetPlayer.Coin += int.Parse(temp);
+            await DataBaseOperator.UpdatePlayer(targetPlayer);
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver,
+                $"ADD {targetPlayer.Name} {temp} Coin SUCCEED"));
+        }
+        /// <summary>
         /// 给别人送傻狗牌
         /// </summary>
         /// <param name="groupReceiverInfo"></param>
@@ -107,7 +127,8 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             var target = groupReceiverInfo.AtMessages[0].Target;
             var targetPlayer = await DataBaseOperator.FindPlayer(target);
             targetPlayer.IsWinToday = false;
-            targetPlayer.IsHitBoss=false;
+            targetPlayer.IsHitBoss = false;
+            targetPlayer.Power = 20;
             await DataBaseOperator.UpdatePlayer(targetPlayer);
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{targetPlayer.Id} REFRESH"));
         }

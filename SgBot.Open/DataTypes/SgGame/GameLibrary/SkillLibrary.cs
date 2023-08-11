@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SgBot.Open.Utils.Basic;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,19 +21,21 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
 
     public abstract class Skill
     {
-        protected Skill(string name, string description, string action, SkillTypeEnum skillType = SkillTypeEnum.Active)
+        protected Skill(string name, string description,string effect, string action, SkillTypeEnum skillType = SkillTypeEnum.Active)
         {
             Name = name;
             Description = description;
             Action = action;
             SkillType = skillType;
+            Effect = effect;
         }
 
         public string Name { get; set; }
         public string Description { get; set; }
+        public string Effect { get; set; }
         public string Action { get; set; }
         public SkillTypeEnum SkillType { get; set; }
-        public abstract BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit,int skillLevel, SkillTypeEnum type);
+        public abstract bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit,int skillLevel, SkillTypeEnum type);
 
         public enum SkillTypeEnum
         {
@@ -44,31 +47,66 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
     // 天地闪耀傻狗之星
     public class GodAttack : Skill
     {
-        public override BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
-        {
+
+        public override bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
+        {        
             if (type != SkillType)
             {
-                return unit;
+                return false;
+            }
+            if(!UsefulMethods.IsOk(100,(int)activePossibilty))
+            {
+                return false;
             }
             enemyUnit.Hp -= 114514;
             Action = "随手一击，造成了114514真实伤害";
-            return unit;
+            return true;
         }
-        public GodAttack() : base("天地闪耀傻狗之星", "傻狗一击", ""){}
+        public GodAttack() : base("天地闪耀傻狗之星", "傻狗一击", "造成114514真实伤害", "") { }
     }
+
     public class HotBlood : Skill
     {
-        public override BattleUnit ActiveSkill(BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
+        public override bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
         {
             if (type != SkillType)
             {
-                return unit;
+                return false;
+            }
+            //if (!UsefulMethods.IsOk(100, (int)activePossibilty))
+            //{
+            //    return false;
+            //}
+
+            if (unit.Buffs.ContainsKey(this.Name))
+            {
+                unit.Buffs[this.Name].BattleSpeed += unit.SpeedOrigin * 0.09;
+            }
+            else
+            {
+                var temp = new Buff()
+                {
+                    BattleSpeed = unit.SpeedOrigin * 0.09,
+                };
+                unit.Buffs.Add(this.Name, temp);
+            }
+            return true;
+        }
+        public HotBlood() : base("热血战魂", "心中的热血", "每次攻击后攻速增加9%", "", SkillTypeEnum.Passive) { }
+    }
+    public class GMPower : Skill
+    {
+        public override bool ActiveSkill(double activePossibilty, ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
+        {
+            if (type != SkillType)
+            {
+                return false;
             }
             enemyUnit.Hp -= 114514;
             Action = "热血！";
-            return unit;
+            return true;
         }
-        public HotBlood() : base("热血战魂", "心中的热血,每次攻击后攻速增加9%", "",SkillTypeEnum.Passive) { }
+        public GMPower() : base("元初宗师之力", "作为最古老的宗师，一次死亡不能击倒你，反而会呼死你变得更加强大", "免疫一次死亡,满状态复活后暴击数值提高100%,速度提高100%", "", SkillTypeEnum.Passive) { }
     }
     // 奶一口
     //public class HealMyself : Skill

@@ -219,7 +219,7 @@ namespace SgBot.Open.Utils.Extra
         /// <returns></returns>
         public static string MakeSgGameBag(Player player)
         {
-            var skInfo = new SKImageInfo(660, 70 + (player.Bag.Count) * 60);
+            var skInfo = new SKImageInfo(680, 70 + (player.Bag.Count) * 60);
             using (var surface = SKSurface.Create(skInfo))
             {
                 using var glCanvas = surface.Canvas;
@@ -380,9 +380,9 @@ namespace SgBot.Open.Utils.Extra
 
                     var battleText = "";
                     var isSkill = false;
-                    if (!detail.SkillAction.IsNullOrEmpty())
+                    if (!detail.PostiveSkillAction.IsNullOrEmpty())
                     {
-                        glCanvas.DrawText($"{detail.SkillAction}", 3f, 25 + 20 * lines,
+                        glCanvas.DrawText($"{detail.PostiveSkillAction}", 3f, 25 + 20 * lines,
                             skPurplePaint);
                         lines++;
                     }

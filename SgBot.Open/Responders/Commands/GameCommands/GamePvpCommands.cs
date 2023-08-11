@@ -81,6 +81,10 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 {
                     rankGet *= (int)player.Rank;
                 }
+                else
+                {
+                    rankGet += 10;
+                }
 
                 var isUp = player.GetRankScore(rankGet);
                 var isLevelUp = player.GetExp(expGet);

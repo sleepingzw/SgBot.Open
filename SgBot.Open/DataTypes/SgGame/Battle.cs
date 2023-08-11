@@ -54,11 +54,11 @@ namespace SgBot.Open.DataTypes.SgGame
                 slowUnit.MagicAtkBattle *= 1 + (int)((round - 1) / 10);
                 slowUnit.PhysicalAtkBattle *= 1 + (int)((round - 1) / 10);
 
-                var skillActiveLog = "";
+                var postiveSkillActiveLog = "";
                 var isCrit = false;
-
-
-
+                var isMiss = true;
+                var isPlayerAttack = false;
+                long dmg = 0;
                 if (speedFlag >= 1) // 速度高的攻击
                 {
                     speedFlag--;
@@ -72,12 +72,15 @@ namespace SgBot.Open.DataTypes.SgGame
                     {
                         value = 20;
                     }
-                    foreach (var skill in fastUnit.Skills.Where(skill => UsefulMethods.IsOk(100, (int)value)))
+                    //主动技能启动
+                    foreach (var skill in fastUnit.Skills)
                     {
                         if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
-                        fastUnit = whatSkill.ActiveSkill(fastUnit, ref slowUnit, 1,Skill.SkillTypeEnum.Active);
-                        skillActiveLog += $"{whatSkill.Name} 发动! {fname}{whatSkill.Action}";
-                        break;
+                        if(whatSkill.ActiveSkill(value,ref fastUnit, ref slowUnit, 1, Skill.SkillTypeEnum.Active))
+                        {
+                            postiveSkillActiveLog += $"{whatSkill.Name} 发动! {fname}{whatSkill.Action}";
+                            break;
+                        }                        
                     }
 
                     var temp = slowUnit.CriticalProbabilityBattle - fastUnit.CriticalProbabilityBattle;
@@ -85,7 +88,6 @@ namespace SgBot.Open.DataTypes.SgGame
                     if (temp < 0)
                     {
                         swiftFlag = 10;
-
                     }
                     else
                     {
@@ -124,9 +126,10 @@ namespace SgBot.Open.DataTypes.SgGame
                     {
                         isCrit = true;
                     }
-
-                    if (UsefulMethods.IsOk(100, (int)swiftFlag))
+                                        
+                    if (UsefulMethods.IsOk(100, (int)swiftFlag))//判定闪避,生成伤害
                     {
+                        isMiss = false;
                         var jsp = Math.Log2(2 * slowUnit.PhysicalDefBattle) / Math.Log2(2 * fastUnit.PhysicalAtkBattle);
                         jsp += slowUnit.PhysicalDefBattle;
                         jsp *= Math.Sqrt(Math.Sqrt(1 + slowUnit.PhysicalDefBattle));
@@ -140,8 +143,8 @@ namespace SgBot.Open.DataTypes.SgGame
                         magDmg = (int)(magDmg * UsefulMethods.MakeRandom(110, 90) / 100);
                         if (magDmg < 0) magDmg = 0;
                         var dmgDouble = phyDmg + magDmg;
-                        var dmg = (long)dmgDouble;
-                        if (isCrit)
+
+                        if (isCrit)//判定暴击
                         {
                             var trueTime = fastUnit.CriticalDamageBattle - slowUnit.CriticalDamageBattle;
                             if (trueTime < 0)
@@ -153,79 +156,35 @@ namespace SgBot.Open.DataTypes.SgGame
                             trueTime *= 1.5;
                             dmg = (long)(dmgDouble * trueTime);
                         }
-
-                        if (slowUnit.Shield > 0)
-                        {
-                            slowUnit.Shield -= dmg;
-                            if (slowUnit.Shield < 0) slowUnit.Shield = 0;
-                        }
                         else
                         {
-                            slowUnit.Hp -= dmg;
+                            dmg = (long)dmgDouble;
                         }
-                        // 护盾回复
-                        if (fastUnit.Shield != 0)
-                        {
-                            fastUnit.Shield += (long)(fastUnit.MaxShield * 0.1);
-                            if (fastUnit.Shield > fastUnit.MaxShield)
-                            {
-                                fastUnit.Shield = fastUnit.MaxShield;
-                            }
-                        }
-                        if (isPlayerFast)
-                        {
-                            var detail = new BattleLogDetail(true, false, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, dmg,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
-                        }
-                        else
-                        {
-                            var detail = new BattleLogDetail(false, false, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, dmg,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
-                        }
+                    }
+                    // 造成伤害
+                    if (slowUnit.Shield > 0)
+                    {
+                        slowUnit.Shield -= dmg;
+                        if (slowUnit.Shield < 0) slowUnit.Shield = 0;
                     }
                     else
                     {
-                        // 护盾回复
-                        if (fastUnit.Shield != 0)
+                        slowUnit.Hp -= dmg;
+                    }
+                    // 护盾回复
+                    if (fastUnit.Shield != 0)
+                    {
+                        fastUnit.Shield += (long)(fastUnit.MaxShield * 0.1);
+                        if (fastUnit.Shield > fastUnit.MaxShield)
                         {
-                            fastUnit.Shield += (long)(fastUnit.MaxShield * 0.1);
-                            if (fastUnit.Shield > fastUnit.MaxShield)
-                            {
-                                fastUnit.Shield = fastUnit.MaxShield;
-                            }
-                        }
-                        if (isPlayerFast)
-                        {
-                            var detail = new BattleLogDetail(true, true, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, 0,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
-                        }
-                        else
-                        {
-                            var detail = new BattleLogDetail(false, true, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, 0,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
+                            fastUnit.Shield = fastUnit.MaxShield;
                         }
                     }
                     //被动技能生效
+                    //fastUnit.Skills
+
+                    isPlayerAttack = isPlayerFast;
+
                 }
                 else // 速度低的攻击
                 {
@@ -241,12 +200,14 @@ namespace SgBot.Open.DataTypes.SgGame
                     {
                         value = 20;
                     }
-                    foreach (var skill in slowUnit.Skills.Where(skill => UsefulMethods.IsOk(100, (int)value)))
+                    foreach (var skill in slowUnit.Skills)
                     {
                         if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
-                        slowUnit = whatSkill.ActiveSkill(slowUnit, ref fastUnit, 1, Skill.SkillTypeEnum.Active);
-                        skillActiveLog += $"{whatSkill.Name} 发动! {sname}{whatSkill.Description}";
-                        break;
+                        if(whatSkill.ActiveSkill(value,ref slowUnit, ref fastUnit, 1, Skill.SkillTypeEnum.Active))
+                        {
+                            postiveSkillActiveLog += $"{whatSkill.Name} 发动! {sname}{whatSkill.Description}";
+                            break;
+                        }                        
                     }
 
                     var temp = fastUnit.CriticalProbabilityBattle - slowUnit.CriticalProbabilityBattle;
@@ -254,7 +215,6 @@ namespace SgBot.Open.DataTypes.SgGame
                     if (temp < 0)
                     {
                         swiftFlag = 10;
-
                     }
                     else
                     {
@@ -292,8 +252,10 @@ namespace SgBot.Open.DataTypes.SgGame
                         isCrit = true;
                     }
 
+                    //判定闪避,生成伤害
                     if (UsefulMethods.IsOk(100, (int)swiftFlag))
                     {
+                        isMiss = false;
                         var jsp = Math.Log2(2 * fastUnit.PhysicalDefBattle) / Math.Log2(2 * slowUnit.PhysicalAtkBattle);
                         jsp += fastUnit.PhysicalDefBattle;
                         jsp *= Math.Sqrt(Math.Sqrt(1 + fastUnit.PhysicalDefBattle));
@@ -307,7 +269,6 @@ namespace SgBot.Open.DataTypes.SgGame
                         magDmg = (int)(magDmg * UsefulMethods.MakeRandom(110, 90) / 100);
                         if (magDmg < 0) magDmg = 0;
                         var dmgDouble = phyDmg + magDmg;
-                        var dmg = (long)dmgDouble;
                         if (isCrit)
                         {
                             var trueTime = slowUnit.CriticalDamageBattle - fastUnit.CriticalDamageBattle;
@@ -320,6 +281,10 @@ namespace SgBot.Open.DataTypes.SgGame
                             trueTime *= 1.5;
                             dmg = (long)(dmgDouble * trueTime);
                         }
+                        else
+                        {
+                            dmg = (long)dmgDouble;
+                        }
 
                         if (fastUnit.Shield > 0)
                         {
@@ -330,74 +295,33 @@ namespace SgBot.Open.DataTypes.SgGame
                         {
                             fastUnit.Hp -= dmg;
                         }
-                        // 护盾回复
-                        if (slowUnit.Shield != 0)
-                        {
-                            slowUnit.Shield += (long)(slowUnit.MaxShield * 0.1);
-                            if (slowUnit.Shield > slowUnit.MaxShield)
-                            {
-                                slowUnit.Shield = slowUnit.MaxShield;
-                            }
-                        }
-                        if (isPlayerFast)
-                        {
-                            var detail = new BattleLogDetail(false, false, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, dmg,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
-                        }
-                        else
-                        {
-                            var detail = new BattleLogDetail(true, false, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, dmg,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
-                        }
                     }
-                    else
+                    // 护盾回复
+                    if (slowUnit.Shield != 0)
                     {
-                        // 护盾回复
-                        if (slowUnit.Shield != 0)
+                        slowUnit.Shield += (long)(slowUnit.MaxShield * 0.1);
+                        if (slowUnit.Shield > slowUnit.MaxShield)
                         {
-                            slowUnit.Shield += (long)(slowUnit.MaxShield * 0.1);
-                            if (slowUnit.Shield > slowUnit.MaxShield)
-                            {
-                                slowUnit.Shield = slowUnit.MaxShield;
-                            }
-                        }
-                        if (isPlayerFast)
-                        {
-                            var detail = new BattleLogDetail(false, true, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, 0,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
-                        }
-                        else
-                        {
-                            var detail = new BattleLogDetail(true, true, slowUnit.MaxHp,
-                                slowUnit.Hp, slowUnit.MaxShield,
-                                slowUnit.Shield, fastUnit.MaxHp,
-                                fastUnit.Hp, fastUnit.MaxShield,
-                                fastUnit.Shield, 0,
-                                isCrit, skillActiveLog);
-                            ret.Details.Add(detail);
+                            slowUnit.Shield = slowUnit.MaxShield;
                         }
                     }
+                    isPlayerAttack = !isPlayerFast;
                     //被动技能生效
                 }
+                //写入detail
+                var detail = new BattleLogDetail(isPlayerAttack, isMiss, fastUnit.MaxHp,
+                            fastUnit.Hp, fastUnit.MaxShield,
+                            fastUnit.Shield, slowUnit.MaxHp,
+                            slowUnit.Hp, slowUnit.MaxShield,
+                            slowUnit.Shield, dmg,
+                            isCrit, postiveSkillActiveLog);
+                ret.Details.Add(detail);
 
                 speed = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
                 round++;
             }
+
+            //退出战斗循环，结算结果
             if (fastUnit.Hp <= 0)
             {
                 ret.IsWin = !isPlayerFast;

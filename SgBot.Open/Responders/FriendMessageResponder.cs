@@ -23,26 +23,49 @@ namespace SgBot.Open.Responders
             }
 
             var cc = receiver.MessageChain.OfType<PlainMessage>().ToList()[0].Text;
-            var id = cc.Split(' ')[1];
-            var tf = cc.Split(" ")[2];
-            switch (cc.Split(' ')[0])
+            var ll= cc.Split(' ');
+            switch (ll[0])
             {
                 case "通过好友":
-                    var request =
-                        FriendRequestOperator.TryHandleRequest(id, out var requested);
-                    if (tf == "true")
+                    var id= ll[1];
+                    if (FriendRequestOperator.TryHandleRequest(id, out var requested))
                     {
                         await RequestManager.HandleNewFriendRequestedAsync(requested, NewFriendRequestHandlers.Approve);
-                        await receiver.SendMessageAsync($"{id} approve");
+                        await receiver.QuoteMessageAsync($"{id} approve");
                         FriendRequestOperator.RemoveRequest(id);
                     }
                     else
                     {
-                        await RequestManager.HandleNewFriendRequestedAsync(requested, NewFriendRequestHandlers.Reject);
-                        await receiver.SendMessageAsync($"{id} reject");
-                        FriendRequestOperator.RemoveRequest(id);
+                        await receiver.SendMessageAsync($"{id} did not exist");
                     }
-
+                    break;
+                case "改变群黑名单":
+                    var gid = ll[1];
+                    var g = await DataBaseOperator.FindGroup(gid);
+                    g.IsBanned = !g.IsBanned;
+                    if(g.IsBanned)
+                    {
+                        await receiver.QuoteMessageAsync($"{gid} 进入黑名单");
+                    }
+                    else
+                    {
+                        await receiver.QuoteMessageAsync($"{gid} 离开黑名单");
+                    }
+                    await DataBaseOperator.UpdateGroupInfo(g);
+                    break;
+                case "改变用户黑名单":
+                    var uid = ll[1];
+                    var u = await DataBaseOperator.FindUser(uid);
+                    u.IsBanned = !u.IsBanned;
+                    if (u.IsBanned)
+                    {
+                        await receiver.QuoteMessageAsync($"{uid} 进入黑名单");
+                    }
+                    else
+                    {
+                        await receiver.QuoteMessageAsync($"{uid} 离开黑名单");
+                    }
+                    await DataBaseOperator.UpdateUserInfo(u);
                     break;
                 default:
                     break;

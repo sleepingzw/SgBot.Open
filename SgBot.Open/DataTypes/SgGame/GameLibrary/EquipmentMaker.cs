@@ -47,9 +47,9 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
         {
             switch (level)
             {
-                case > 500 when UsefulMethods.IsOk(3):
+                case > 400 when UsefulMethods.IsOk(3):
                     return 5;
-                case > 500:
+                case > 400:
                     return UsefulMethods.IsOk(2) ? 4 : 3;
                 case > 300 when UsefulMethods.IsOk(3):
                     return 4;

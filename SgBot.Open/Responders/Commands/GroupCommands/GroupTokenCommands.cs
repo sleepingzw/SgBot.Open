@@ -193,7 +193,7 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             {
                 tokenGet += cardList[i] switch
                 {
-                    < 600 => 2,
+                    < 600 => 1,
                     < 850 => 10,
                     < 950 => 40,
                     < 990 => 100,

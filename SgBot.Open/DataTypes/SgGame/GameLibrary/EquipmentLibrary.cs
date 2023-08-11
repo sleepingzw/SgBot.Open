@@ -635,13 +635,13 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             };
             WeaponList[4].Add(weapon4_3);
             //armor4
-            var armor4_1 = new Equipment(EquipmentCategory.Armor, "黄金甲", "不是圣斗士哦", 1, false)
+            var armor4_1 = new Equipment(EquipmentCategory.Armor, "圣衣", "不是圣斗士哦", 1, false)
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    MagicDefBonus = 0.8,
-                    PhysicalDefBonus = 0.8,
-                    MaxHpBonus = 2,
+                    MagicDefBonus = 1,
+                    PhysicalDefBonus = 1,
+                    MaxHpBonus = 2.4,
                     MaxShieldBonus = 2.4
                 }
             };
@@ -651,8 +651,8 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    MagicDefBonus = 0.8,
-                    PhysicalDefBonus = 0.8,
+                    MagicDefBonus = 0.9,
+                    PhysicalDefBonus = 0.9,
                     MaxHpBonus = 2,
                     MaxShieldBonus = 2.4,
                     PhysicalAtkBonus = 1.6,
@@ -669,12 +669,12 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    PhysicalAtkBonus = 3.2,
-                    MagicAtkBonus = 1.6,
+                    PhysicalAtkBonus = 5.14,
+                    MagicAtkBonus = 3.2,
                     SpeedBonus = 4,
-                    SwiftBonus = -0.5,
+                    SwiftBonus = -0.2,
                     CriticalDamageBonus = 8,
-                    CriticalProbabilityBonus = 2
+                    CriticalProbabilityBonus = 4
                 }
             };
             WeaponList[5].Add(weapon5_1);
@@ -683,26 +683,37 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    MagicDefBonus = 1.6,
-                    PhysicalDefBonus = 3.2,
+                    MagicDefBonus = 4.8,
+                    PhysicalDefBonus = 9.6,
                     SpeedBonus = -0.4,
                     SwiftBonus = -0.4,
-                    MaxHpBonus = 4,
-                    MaxShieldBonus = 9.6
+                    MaxHpBonus = 11.4,
+                    MaxShieldBonus = 31.4
                 }
             };
             ArmorList[5].Add(armor5_1);
+            var armor5_2 = new Equipment(EquipmentCategory.Armor, "星尘庇佑", "群星环绕", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    MagicDefBonus = 9.6,
+                    PhysicalDefBonus = 4.8,
+                    MaxHpBonus = 19.1,
+                    MaxShieldBonus = 19.1
+                }
+            };
+            ArmorList[5].Add(armor5_2);
             //jewelry5
             var jewelry5_1 = new Equipment(EquipmentCategory.Jewelry, "雪风的快速修理装置", "雪风会保护大家的", 1, false)
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    PhysicalAtkBonus = 1.6,
-                    PhysicalDefBonus = 1.14,
-                    MagicAtkBonus = 1.6,
-                    MagicDefBonus = 1.14,
+                    PhysicalAtkBonus = 3.2,
+                    PhysicalDefBonus = 2.4,
+                    MagicAtkBonus = 5.14,
+                    MagicDefBonus = 5.14,
                     SpeedBonus = 2,
-                    SwiftBonus = 5.14,
+                    SwiftBonus = 19.1,
                     MaxHpBonus = 4,
                     MaxShieldBonus = 4
                 }

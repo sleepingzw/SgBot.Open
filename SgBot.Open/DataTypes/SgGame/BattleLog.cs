@@ -26,7 +26,7 @@ namespace SgBot.Open.DataTypes.SgGame
 
         public int OutLines()
         {
-            return Details.Count * 3 + Details.Count(detail => !detail.SkillAction.IsNullOrEmpty()) +
+            return Details.Count * 3 + Details.Count(detail => !detail.PostiveSkillAction.IsNullOrEmpty()) +
                    Details.Count() / 10;
         }
     }
@@ -51,12 +51,12 @@ namespace SgBot.Open.DataTypes.SgGame
         public bool IsCritical;
         public bool IsMiss;
 
-        public string SkillAction;
+        public string PostiveSkillAction;
 
         public BattleLogDetail(bool isPlayerAttack, bool isMiss, long playerHpMax, long playerHpNow,
             long playerShieldMax,
             long playerShieldNow, long enemyHpMax, long enemyHpNow, long enemyShieldMax, long enemyShieldNow,
-            long attackerDmg, bool isCritical, string skillAction)
+            long attackerDmg, bool isCritical, string postiveSkillAction)
         {
             IsPlayerAttack = isPlayerAttack;
             PlayerHpMax = playerHpMax;
@@ -69,7 +69,7 @@ namespace SgBot.Open.DataTypes.SgGame
             EnemyShieldNow = enemyShieldNow;
             AttackerDmg = attackerDmg;
             IsCritical = isCritical;
-            SkillAction = skillAction;
+            PostiveSkillAction = postiveSkillAction;
             IsMiss = isMiss;
         }
 

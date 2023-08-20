@@ -63,7 +63,7 @@ namespace SgBot.Open.Utils.Basic
                         _ = result.IsQuote ? result.Receiver.QuoteMessageAsync(result.Chain) : result.Receiver.SendMessageAsync(result.Chain);
                         Logger.Log($"队列剩余消息{GroupMessageRespondQueue.Count}", LogLevel.Simple);
                     }
-                    Thread.Sleep(300);
+                    Thread.Sleep(250);
                 }
                 catch (Exception ex)
                 {

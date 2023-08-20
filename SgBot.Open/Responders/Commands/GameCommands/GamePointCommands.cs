@@ -107,7 +107,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             }
 
             player.Coin -= 100 * player.Level;
-            player.Level -= (int)(player.Level * 0.1);
+            // player.Level -= (int)(player.Level * 0.1);
             player.FreePoints = player.Level - 1;
             player.Agility = 1;
             player.Strength = 1;
@@ -115,7 +115,8 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Intelligence = 1;
 
             await DataBaseOperator.UpdatePlayer(player);
-            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"洗点成功 洗点后等级 Lv.{player.Level} 自由属性点 {player.FreePoints}点", true));
+            // RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"洗点成功 洗点后等级 Lv.{player.Level} 自由属性点 {player.FreePoints}点", true));
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"洗点成功", true));
         }
     }
 }

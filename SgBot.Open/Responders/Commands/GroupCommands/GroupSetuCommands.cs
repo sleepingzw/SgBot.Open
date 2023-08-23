@@ -30,19 +30,22 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "搜索中", true));
 
-                var datago = new Datago();
-                var size = new List<string>();
-                var tag = new List<string>();
-                size.Add("regular");
                 var key = "";
                 if (groupMessageReceivedInfo.PlainMessages.Count > 1)
                 {
                     key = groupMessageReceivedInfo.PlainMessages[1];
                 }
-                datago.r18 = (int)groupMessageReceivedInfo.Group.SetuR18Status;
-                datago.size = size;
-                datago.keyword = key;
-                datago.tag = tag;
+                var datago = new Datago
+                {
+                    r18 = (int)groupMessageReceivedInfo.Group.SetuR18Status,
+                    size = new List<string>
+                    {
+                        "regular"
+                    },
+                    tag = new List<string>(),
+                    keyword = key,
+                    proxy = "i.pixiv.cat"
+                };
                 var data = JsonConvert.SerializeObject(datago);
                 try
                 {
@@ -80,9 +83,9 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                             dler.DownloadPicture();
                         }
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        throw new Exception("下载图片失败,可能是节点流量耗尽,请联系管理员");
+                        throw new Exception($"{ex.Message}\n下载图片失败,如果重复出现请联系管理员");
                     }
 
                     DataBaseOperator.UpSetuCount();
@@ -121,21 +124,25 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 groupMessageReceivedInfo.Member.Token--;
                 await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "搜索中", true));
-
-                var datago = new Datago();
-                var size = new List<string>();
-                var tag = new List<string>();
-                size.Add("regular");
                 var msg = "";
                 if (groupMessageReceivedInfo.PlainMessages.Count > 1)
                 {
                     msg = groupMessageReceivedInfo.PlainMessages[1];
                 }
-                tag.Add(msg);
-                datago.r18 = (int)groupMessageReceivedInfo.Group.SetuR18Status;
-                datago.size = size;
-                datago.keyword = "";
-                datago.tag = tag;
+                var datago = new Datago
+                {
+                    r18 = (int)groupMessageReceivedInfo.Group.SetuR18Status,
+                    size = new List<string>
+                    {
+                        "regular"
+                    },
+                    tag = new List<string>()
+                    {
+                        msg
+                    },
+                    keyword = "",
+                    proxy = "i.pixiv.cat"
+                };
                 var data = JsonConvert.SerializeObject(datago);
                 try
                 {
@@ -212,16 +219,18 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 groupMessageReceivedInfo.Member.Token--;
                 await DataBaseOperator.UpdateUserInfo(groupMessageReceivedInfo.Member);
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "搜索中", true));
+                var datago = new Datago
+                {
+                    r18 = (int)groupMessageReceivedInfo.Group.SetuR18Status,
+                    size = new List<string>
+                    {
+                        "regular"
+                    },
+                    tag = new List<string>(),
+                    keyword = "",
+                    proxy = "i.pixiv.cat"
+                };
 
-                var datago = new Datago();
-                var size = new List<string>();
-                var tag = new List<string>();
-                size.Add("regular");
-
-                datago.r18 = (int)groupMessageReceivedInfo.Group.SetuR18Status;
-                datago.size = size;
-                datago.keyword = "";
-                datago.tag = tag;
                 var data = JsonConvert.SerializeObject(datago);
                 try
                 {

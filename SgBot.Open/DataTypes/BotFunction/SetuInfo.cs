@@ -77,5 +77,6 @@ namespace SgBot.Open.DataTypes.BotFunction
         public List<string> size { get; set; }
         public List<string> tag { get; set; }
         public string keyword { get; set; }
+        public string proxy { get; set; }
     }
 }

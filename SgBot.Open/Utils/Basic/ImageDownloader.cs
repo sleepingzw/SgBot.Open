@@ -39,6 +39,7 @@ namespace SgBot.Open.Utils.Basic
             catch (WebException ex)
             {
                 Logger.Log(ex.Message,LogLevel.Error);
+                throw ex;
             }
             finally
             {

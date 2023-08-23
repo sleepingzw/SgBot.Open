@@ -78,7 +78,7 @@ namespace SgBot.Open.DataTypes.SgGame
             MagicDefOrigin = Math.Atan((double)player.Intelligence / 200) * 40;
             CriticalProbabilityOrigin = 20;
             CriticalDamageOrigin = 1;
-            SwiftOrigin = player.Agility * 1;
+            SwiftOrigin = 10 + Math.Atan((double)player.Agility / 60) * 100;
 
             // Logger.Log(DataOperator.ToJsonString(this),LogLevel.Important);
             // 统一加算全部的装备属性

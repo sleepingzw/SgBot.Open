@@ -49,10 +49,12 @@ namespace SgBot.Open.DataTypes.SgGame
                 fastUnit.Refresh();
                 slowUnit.Refresh();
 
-                fastUnit.MagicAtkBattle *= 1 + (int)((round - 1) / 10);
-                fastUnit.PhysicalAtkBattle *= 1 + (int)((round - 1) / 10);
-                slowUnit.MagicAtkBattle *= 1 + (int)((round - 1) / 10);
-                slowUnit.PhysicalAtkBattle *= 1 + (int)((round - 1) / 10);
+                var times = 1 + (int)((round - 1) / 10);
+
+                fastUnit.MagicAtkBattle *= times;
+                fastUnit.PhysicalAtkBattle *= times ;
+                slowUnit.MagicAtkBattle *= times;
+                slowUnit.PhysicalAtkBattle *= times;
 
                 var postiveSkillActiveLog = "";
                 var isCrit = false;
@@ -83,33 +85,37 @@ namespace SgBot.Open.DataTypes.SgGame
                         }
                     }
 
-                    var temp = slowUnit.CriticalProbabilityBattle - fastUnit.CriticalProbabilityBattle;
+                    var critTemp = fastUnit.CriticalProbabilityBattle - slowUnit.CriticalProbabilityBattle;
+                    var swingTemp = fastUnit.SwiftBattle-slowUnit.SwiftBattle;
+                    // 命中率
                     double swiftFlag;
-                    if (temp < 0)
+                    if (swingTemp < 0)
                     {
-                        swiftFlag = 10;
+                        swingTemp = -swingTemp;
+                        var temp = Math.Pow(swingTemp, 1.5);
+                        swiftFlag = 85 - 0.18 * temp;
+                        // Console.WriteLine(swiftFlag);
                     }
                     else
                     {
-                        swiftFlag = 5 * Math.Log2(2 * temp) / 15;
-                    }
-                    swiftFlag = 100 - swiftFlag;
-                    if (swiftFlag > 90)
-                    {
-                        swiftFlag = 90;
+                        var temp = Math.Pow(swingTemp, 1.5);
+                        swiftFlag = 85 + 0.1 * temp;
                     }
 
-                    if (swiftFlag < 10)
+                    if (swiftFlag >= 100)
                     {
-                        swiftFlag = 10;
+                        swiftFlag = 100;
+                    }
+                    if (swiftFlag <= 5)
+                    {
+                        swiftFlag = 5;
                     }
 
-                    temp = -temp;
-                    if (temp < 0)
+                    if (critTemp <= 0)
                     {
-                        temp = 1;
+                        critTemp = 1;
                     }
-                    var critFlag = (int)(DefaultCrit + Math.Log2(2 * temp));
+                    var critFlag = (int)(DefaultCrit + Math.Log2(2 * critTemp));
 
                     #region 暴击处理
                     if (critFlag > 95)
@@ -210,32 +216,36 @@ namespace SgBot.Open.DataTypes.SgGame
                         }
                     }
 
-                    var temp = fastUnit.CriticalProbabilityBattle - slowUnit.CriticalProbabilityBattle;
-                    double swiftFlag = 0;
-                    if (temp < 0)
+                    var critTemp = slowUnit.CriticalProbabilityBattle - fastUnit.CriticalProbabilityBattle;
+                    var swingTemp = slowUnit.SwiftBattle-fastUnit.SwiftBattle;
+                    //命中率
+                    double swiftFlag;
+                    if (swingTemp < 0)
                     {
-                        swiftFlag = 10;
+                        swingTemp = -swingTemp;
+                        var temp = Math.Pow(swingTemp, 1.5);
+                        swiftFlag = 85 - 0.18 * temp;
                     }
                     else
                     {
-                        swiftFlag = 5 * Math.Log2(2 * temp) / 15;
+                        var temp = Math.Pow(swingTemp, 1.5);
+                        swiftFlag = 85 + 0.1 * temp;
                     }
 
-                    swiftFlag = 100 - swiftFlag;
-                    if (swiftFlag > 90)
+                    if (swiftFlag >= 100)
                     {
-                        swiftFlag = 90;
+                        swiftFlag = 100;
                     }
-                    if (swiftFlag < 10)
+                    if (swiftFlag <= 5)
                     {
-                        swiftFlag = 10;
+                        swiftFlag = 5;
                     }
-                    temp = -temp;
-                    if (temp < 0)
+
+                    if (critTemp <= 0)
                     {
-                        temp = 1;
+                        critTemp = 1;
                     }
-                    var critFlag = (int)(DefaultCrit + Math.Log2(2 * temp));
+                    var critFlag = (int)(DefaultCrit + Math.Log2(2 * critTemp));
                     #region 暴击处理
                     if (critFlag > 95)
                     {

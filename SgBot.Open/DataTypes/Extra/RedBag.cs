@@ -78,7 +78,6 @@ namespace SgBot.Open.DataTypes.Extra
             {
                 foreach (var pkg in AllRedBags[groupId])
                 {
-                    Console.WriteLine(pkg.Id);
                     if (pkg.Id == whichPkg)
                     {
                         if (pkg.WhoGot.Contains(who))

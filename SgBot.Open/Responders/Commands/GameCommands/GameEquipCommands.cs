@@ -146,13 +146,13 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             var success = player.Bag[what - 1].UpgradeEquipment();
             if (!success)
             {
-                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"装备 {player.Bag[what - 1].Name} 已经升至最高等级", true));
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"装备({player.Bag[what - 1].Name})已经升至最高等级", true));
                 return;
             }
             player.Coin -= needCoin;
             player.SortBag();
             await DataBaseOperator.UpdatePlayer(player);
-            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"装备 {player.Bag[what - 1].Name} 升级成功 当前Rk{player.Bag[what - 1].Level}", true));
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"装备({player.Bag[what - 1].Name})升级成功 当前Rk{player.Bag[what - 1].Level}", true));
         }
         /// <summary>
         /// 丢弃背包中的某个装备
@@ -173,11 +173,11 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Refresh();
             if (GroupMessageReceivedInfo.PlainMessages[1] == "all")
             {
-                var tempList = player.Bag.Where(i => i.OnBody).ToList();
+                var tempList = player.OutLock();
                 player.Bag.Clear();
                 player.Bag = tempList;
                 await DataBaseOperator.UpdatePlayer(player);
-                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "已丢弃所有非装备物品", true));
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "已丢弃所有非装备非锁定物品", true));
                 return;
             }
             var temp = Regex.Replace(GroupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
@@ -193,10 +193,88 @@ namespace SgBot.Open.Responders.Commands.GameCommands
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "装备不存在", true));
                 return;
             }
+            if (player.Bag[what - 1].IsLock)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"({player.Bag[what - 1].Name})被锁定,请先解锁装备", true));
+                return;
+            }
             player.Bag.RemoveAt(what - 1);
             player.SortBag();
             await DataBaseOperator.UpdatePlayer(player);
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "丢弃装备成功", true));
+        }
+
+        [ChatCommand(new string[] { "锁定物品" }, new string[] { "/game.lock", "/g.lock" }, true)]
+        public static async Task LockEquipment(GroupMessageReceivedInfo GroupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (GroupMessageReceivedInfo.PlainMessages.Count != 2)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
+                return;
+            }
+            var player = await DataBaseOperator.FindPlayer(GroupMessageReceivedInfo.Member.UserId);
+            player.Refresh();
+            var temp = Regex.Replace(GroupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
+            if (temp.IsNullOrEmpty())
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
+                return;
+            }
+            var what = int.Parse(temp);
+
+            if (player.Bag.Count < what)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "装备不存在", true));
+                return;
+            }
+            if(player.Bag[what-1].IsLock)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"({player.Bag[what - 1].Name})已经被锁定", true));
+            }
+            else
+            {
+                player.Bag[what - 1].IsLock = true;                
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"({player.Bag[what - 1].Name})锁定成功", true));
+                player.SortBag();
+                await DataBaseOperator.UpdatePlayer(player);
+            }
+        }
+        [ChatCommand(new string[] { "解锁物品" }, new string[] { "/game.unlock", "/g.unlock" }, true)]
+        public static async Task UnlockEquipment(GroupMessageReceivedInfo GroupMessageReceivedInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (GroupMessageReceivedInfo.PlainMessages.Count != 2)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
+                return;
+            }
+            var player = await DataBaseOperator.FindPlayer(GroupMessageReceivedInfo.Member.UserId);
+            player.Refresh();
+            var temp = Regex.Replace(GroupMessageReceivedInfo.PlainMessages[1], @"[^0-9]+", "");
+            if (temp.IsNullOrEmpty())
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "参数错误", true));
+                return;
+            }
+            var what = int.Parse(temp);
+
+            if (player.Bag.Count < what)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "装备不存在", true));
+                return;
+            }
+            if (!player.Bag[what - 1].IsLock)
+            {
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"({player.Bag[what - 1].Name})已经被解锁", true));
+            }
+            else
+            {
+                player.Bag[what - 1].IsLock = false;                
+                RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"({player.Bag[what - 1].Name})解锁成功", true));
+                player.SortBag();
+                await DataBaseOperator.UpdatePlayer(player);
+            }
         }
     }
 }

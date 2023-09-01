@@ -18,13 +18,58 @@ using SgBot.Open.DataTypes.SgGame;
 using SgBot.Open.DataTypes.StaticData;
 using SgBot.Open.Responders;
 using SgBot.Open.Utils.Basic;
+using SlpzLibrary;
 using Spectre.Console;
+var exit = new ManualResetEvent(false);
+var init = Initializer.Initial();
+if (!init)
+    return;
+if (args.Length != 0)
+{
+    if (args[0] == "debug")
+    {
+        if (args[1].Trim() == "outplayer")
+        {
+            var db = new DataBaseContext();
+            var players = db.Players.ToList();
+            DataOperator.WriteJsonFile("player.json", players);
+            Console.WriteLine("Out player data sucess");
+        }
+        else if (args[1] == "update")
+        {
+            //var db = new DataBaseContext();
+            //var players = db.Players.ToList();
+            //foreach (var p in players)
+            //{
+            //    var b = JsonConvert.DeserializeObject<List<EquipmentOld>>(p.BagString)!;
+            //    var bnew = new List<Equipment>();
+            //    foreach (var e in b)
+            //    {
+            //        if(e.OnBody)
+            //        {
+            //            // Console.WriteLine("body");
+            //        }
+            //        bnew.Add(new Equipment(e.Category, e.Name!, e.Description!, e.Level, e.OnBody)
+            //        {
+            //            EquipmentEffect = e.EquipmentEffect                        
+            //        });
+            //    }
+            //    var bstring = JsonConvert.SerializeObject(bnew);
+            //    p.BagString = bstring;
+            //    db.Players.Update(p);
+            //    await db.SaveChangesAsync();
+            //}
+            //Console.WriteLine("Update player data sucess");
+            Console.WriteLine("Nothing to update");
+        }
+        Console.WriteLine("Debug finish. Press any key to continue");
+        Console.ReadLine();
+        Console.Clear();
+    }
+}
 
 var friendDic = new Dictionary<string, NewFriendRequestedEvent>();
-var exit = new ManualResetEvent(false);
-var init=Initializer.Initial();
-if(!init)
-    return;
+
 var bot = Initializer.InitBot();
 Logger.Log($"初始化Bot {StaticData.BotConfig.BotQQ} 成功", LogLevel.Important);
 var respond = new WebPicResponder();
@@ -38,7 +83,6 @@ Logger.Log($"登录Bot {StaticData.BotConfig.BotQQ} 成功",LogLevel.Important);
 
 bot.MessageReceived.OfType<GroupMessageReceiver>().Subscribe(receiver=>
 {
-    // Logger.Log("message received",LogLevel.Simple);
     Task.Run(async () =>
     {
         var info = await MessagePreOperator.GetGroupReceiverInfo(receiver);

@@ -207,17 +207,15 @@ namespace SgBot.Open.DataTypes.SgGame
             var trueMany = many + BuyPowerTime;
             var temp = trueMany / 20;
 
-            // Console.WriteLine(temp);
             var ret = 0;
             int i;
             for (i = 0; i < temp; i++)
             {
                 trueMany -= 20;
                 ret += (i + 1) * 20;
-                // Console.WriteLine(ret);
             }
             ret += trueMany * (i + 2);
-            // Console.WriteLine(ret);
+
             var tt = BuyPowerTime;
             var ttt = tt / 20;
             var bought = 0;
@@ -228,33 +226,174 @@ namespace SgBot.Open.DataTypes.SgGame
                 bought += (j + 1) * 20;
             }
             bought += tt * (j + 2);
-            // Console.WriteLine(bought);
+
             ret -= bought;
             return ret;
         }
         public void SortBag()
         {
-            var temp = new List<Equipment>();
-            foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Weapon))
+            if (Bag.Count == 0)
             {
-                temp.Add(b);
-                Bag.Remove(b);
-                break;
+                return;
             }
-            foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Armor))
+            var tt=Bag.GroupBy(x => x.OnBody).OrderByDescending(k=>k.Key).ToList();
+            var onBody = new List<Equipment>();
+            var isLock = new List<Equipment>();
+            var notLock = new List<Equipment>();
+            if (tt.Count == 1)
             {
-                temp.Add(b);
-                Bag.Remove(b);
-                break;
+                //只有装备的物品
+                if (tt[0].First().OnBody)
+                {
+                    onBody = tt[0].OrderBy(o => o.Category).ToList();
+                }
+                //只有非装备的物品
+                else
+                {
+                    var tt2 = tt[0].GroupBy(x => x.IsLock).OrderByDescending(k => k.Key).ToList();
+                    if (tt2.Count == 1)
+                    {
+                        //只有锁定物品
+                        if (tt2[0].First().IsLock)
+                        {
+                            isLock = tt2[0].OrderBy(o => o.Category).ToList();
+                        }
+                        //只有非锁定物品
+                        else
+                        {
+                            notLock = tt2[0].OrderBy(o => o.Category).ToList();
+                        }
+                    }
+                    //锁定和非锁定都有
+                    else
+                    {
+                        isLock = tt2[0].OrderBy(o => o.Category).ToList();
+                        notLock = tt2[1].OrderBy(o => o.Category).ToList();
+                    }
+                }
             }
-            foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Jewelry))
+            //既有装备的也有没装备的
+            else
             {
-                temp.Add(b);
-                Bag.Remove(b);
-                break;
+                //先取出装备的物品
+                onBody = tt[0].OrderBy(o => o.Category).ToList();
+                //然后看非装备的
+                var notOnBody = tt[1].GroupBy(x => x.IsLock).OrderByDescending(k => k.Key).ToList();
+                //只有一种
+                if (notOnBody.Count == 1)
+                {
+                    if (notOnBody[0].First().IsLock)
+                    {
+                        isLock = notOnBody[0].OrderBy(o => o.Category).ToList();
+                    }
+                    //只有非锁定物品
+                    else
+                    {
+                        notLock = notOnBody[0].OrderBy(o => o.Category).ToList();
+                    }
+                }
+                //都有
+                else
+                {
+                    isLock = notOnBody[0].OrderBy(o => o.Category).ToList();
+                    notLock = notOnBody[1].OrderBy(o => o.Category).ToList();
+                }
             }
-            temp.AddRange(Bag);
-            Bag = temp;
+
+            var temp=new List<Equipment>();
+            temp.AddRange(onBody);
+            temp.AddRange(isLock);
+            temp.AddRange(notLock);
+
+            Bag=temp;
+
+            //var temp = new List<Equipment>();
+            //foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Weapon))
+            //{
+            //    temp.Add(b);
+            //    Bag.Remove(b);
+            //    break;
+            //}
+            //foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Armor))
+            //{
+            //    temp.Add(b);
+            //    Bag.Remove(b);
+            //    break;
+            //}
+            //foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Jewelry))
+            //{
+            //    temp.Add(b);
+            //    Bag.Remove(b);
+            //    break;
+            //}
+            //var tt = new List<Equipment>();
+            //tt.AddRange(Bag);
+            //var locked = new List<Equipment>();
+            //foreach (var b in tt.Where(b => b.IsLock == true))
+            //{                
+            //    Bag.Remove(b);
+            //}
+            //temp.AddRange(Bag);
+            //Bag = temp;
+        }
+
+        public List<Equipment> OutLock()
+        {
+            if(Bag.Count == 0)
+            {
+                return new List<Equipment>();
+            }
+            
+            var tt = Bag.GroupBy(x => x.OnBody).OrderByDescending(k => k.Key).ToList();
+            if(tt.Count == 1)
+            {
+                if (tt[0].First().OnBody)
+                {
+                    return Bag;
+                }
+                else
+                {
+                    var tt2 = tt[0].GroupBy(x => x.IsLock).OrderByDescending(k => k.Key).ToList();
+                    if(tt2.Count==1)
+                    {
+                        if (tt2[0].First().IsLock)
+                        {
+                            return Bag;
+                        }
+                        else
+                        {
+                            return new List<Equipment>();
+                        }
+                    }
+                    else
+                    {
+                        return tt2[0].ToList();
+                    }
+                }
+            }
+            else
+            {
+                var onBody = tt[0].OrderBy(o => o.Category);
+                var tt2 = tt[1].GroupBy(x => x.IsLock).OrderByDescending(k => k.Key).ToList();
+                if (tt2.Count == 1)
+                {
+                    if (tt2[0].First().IsLock)
+                    {
+                        return Bag;
+                    }
+                    else
+                    {
+                        return onBody.ToList();
+                    }
+                }
+                else
+                {
+                    var temp=new List<Equipment>();
+                    temp.AddRange(onBody);
+                    temp.AddRange(tt2[0]);
+                    return temp;
+                }
+            }
         }
         /// <summary>
         /// 每次保存数据前应该调用
@@ -271,7 +410,9 @@ namespace SgBot.Open.DataTypes.SgGame
         /// </summary>
         public void AnalyseString()
         {
+            // Console.WriteLine(BagString);
             Bag = JsonConvert.DeserializeObject<List<Equipment>>(BagString)!;
+            // Console.WriteLine(Bag.Count);
             Title = JsonConvert.DeserializeObject<List<int>>(TitleString)!;
             SkillHave = JsonConvert.DeserializeObject<List<int>>(SkillHaveString)!;
             SkillActive = JsonConvert.DeserializeObject<List<int>>(SkillActiveString)!;

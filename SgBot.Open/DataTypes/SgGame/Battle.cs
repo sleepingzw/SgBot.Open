@@ -12,7 +12,7 @@ namespace SgBot.Open.DataTypes.SgGame
     {
         private const int DefaultSwift = 75;
         private const int DefaultCrit = 10;
-        public BattleLog MakeBattle(Player playerp, Player enemyp)
+        public static BattleLog MakeBattle(Player playerp, Player enemyp)
         {
             var player = new BattleUnit(playerp);
             var enemy = new BattleUnit(enemyp);
@@ -39,7 +39,6 @@ namespace SgBot.Open.DataTypes.SgGame
                 fname = enemyp.Name;
                 isPlayerFast = false;
             }
-            // Console.WriteLine(JsonConvert.SerializeObject(fastUnit,Formatting.Indented));
             var speed = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
             var speedFlag = speed;
             var round = 1;
@@ -49,13 +48,14 @@ namespace SgBot.Open.DataTypes.SgGame
                 fastUnit.Refresh();
                 slowUnit.Refresh();
 
+                #region 狂暴模式
                 var times = 1 + (int)((round - 1) / 10);
 
                 fastUnit.MagicAtkBattle *= times;
                 fastUnit.PhysicalAtkBattle *= times ;
                 slowUnit.MagicAtkBattle *= times;
                 slowUnit.PhysicalAtkBattle *= times;
-
+                #endregion
                 var postiveSkillActiveLog = "";
                 var isCrit = false;
                 var isMiss = true;
@@ -66,14 +66,8 @@ namespace SgBot.Open.DataTypes.SgGame
                     speedFlag--;
                     var value = fastUnit.SkillActiveProbability - slowUnit.SkillActiveProbability;
                     value += 40;
-                    if (value > 100)
-                    {
-                        value = 100;
-                    }
-                    if (value < 20)
-                    {
-                        value = 20;
-                    }
+                    value = UsefulMethods.OutGoodNumber(value, 100, 20);
+
                     //主动技能启动
                     foreach (var skill in fastUnit.Skills)
                     {
@@ -86,46 +80,18 @@ namespace SgBot.Open.DataTypes.SgGame
                     }
 
                     var critTemp = fastUnit.CriticalProbabilityBattle - slowUnit.CriticalProbabilityBattle;
-                    var swingTemp = fastUnit.SwiftBattle-slowUnit.SwiftBattle;
+
                     // 命中率
-                    double swiftFlag;
-                    if (swingTemp < 0)
-                    {
-                        swingTemp = -swingTemp;
-                        var temp = Math.Pow(swingTemp, 1.5);
-                        swiftFlag = 85 - 0.18 * temp;
-                        // Console.WriteLine(swiftFlag);
-                    }
-                    else
-                    {
-                        var temp = Math.Pow(swingTemp, 1.5);
-                        swiftFlag = 85 + 0.1 * temp;
-                    }
+                    double swiftFlag = OutHitPossibility(100 + fastUnit.SwiftBattle, 100 + slowUnit.SwiftBattle);                
 
-                    if (swiftFlag >= 100)
-                    {
-                        swiftFlag = 100;
-                    }
-                    if (swiftFlag <= 5)
-                    {
-                        swiftFlag = 5;
-                    }
-
+                    #region 暴击处理
                     if (critTemp <= 0)
                     {
                         critTemp = 1;
                     }
                     var critFlag = (int)(DefaultCrit + Math.Log2(2 * critTemp));
-
-                    #region 暴击处理
-                    if (critFlag > 95)
-                    {
-                        critFlag = 95;
-                    }
-                    if (critFlag < 5)
-                    {
-                        critFlag = 5;
-                    }
+                    
+                    critFlag = (int)UsefulMethods.OutGoodNumber(critFlag, 100, 5);
                     #endregion
 
                     if (UsefulMethods.IsOk(100, critFlag))
@@ -197,65 +163,32 @@ namespace SgBot.Open.DataTypes.SgGame
                     speedFlag += speed;
                     var value = slowUnit.SkillActiveProbability - fastUnit.SkillActiveProbability;
                     value += 40;
-                    if (value > 100)
-                    {
-                        value = 100;
+                    value = UsefulMethods.OutGoodNumber(value, 100, 20);
 
-                    }
-                    if (value < 20)
-                    {
-                        value = 20;
-                    }
                     foreach (var skill in slowUnit.Skills)
                     {
                         if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
                         if (whatSkill.ActiveSkill(value, ref slowUnit, ref fastUnit, 1, Skill.SkillTypeEnum.Active))
                         {
-                            postiveSkillActiveLog += $"{whatSkill.Name} 发动! {sname}{whatSkill.Description}";
+                            postiveSkillActiveLog += $"{whatSkill.Name} 发动! {sname}{whatSkill.Action}";
                             break;
                         }
                     }
 
                     var critTemp = slowUnit.CriticalProbabilityBattle - fastUnit.CriticalProbabilityBattle;
-                    var swingTemp = slowUnit.SwiftBattle-fastUnit.SwiftBattle;
+
                     //命中率
-                    double swiftFlag;
-                    if (swingTemp < 0)
-                    {
-                        swingTemp = -swingTemp;
-                        var temp = Math.Pow(swingTemp, 1.5);
-                        swiftFlag = 85 - 0.18 * temp;
-                    }
-                    else
-                    {
-                        var temp = Math.Pow(swingTemp, 1.5);
-                        swiftFlag = 85 + 0.1 * temp;
-                    }
+                    double swiftFlag = OutHitPossibility(100 + slowUnit.SwiftBattle, 100 + fastUnit.SwiftBattle);
 
-                    if (swiftFlag >= 100)
-                    {
-                        swiftFlag = 100;
-                    }
-                    if (swiftFlag <= 5)
-                    {
-                        swiftFlag = 5;
-                    }
-
+                    swiftFlag = UsefulMethods.OutGoodNumber(swiftFlag, 100, 5);
+                    #region 暴击处理
                     if (critTemp <= 0)
                     {
                         critTemp = 1;
                     }
                     var critFlag = (int)(DefaultCrit + Math.Log2(2 * critTemp));
-                    #region 暴击处理
-                    if (critFlag > 95)
-                    {
-                        critFlag = 95;
-                    }
-
-                    if (critFlag < 5)
-                    {
-                        critFlag = 5;
-                    }
+                    
+                    critFlag =(int)UsefulMethods.OutGoodNumber(critFlag, 95, 5);
                     #endregion
                     if (UsefulMethods.IsOk(100, critFlag))
                     {
@@ -349,6 +282,26 @@ namespace SgBot.Open.DataTypes.SgGame
             ret.EnemyName = enemyp.Name;
 
             return ret;
+        }
+
+        static double OutHitPossibility(double attackSwift,double defenseSwift)
+        {
+            double swingTemp = attackSwift / defenseSwift;
+            // 命中率
+            double swiftFlag;
+            if (swingTemp < 1)
+            {
+                swingTemp = 1 / swingTemp;
+                var temp = Math.Pow(swingTemp, 2);
+                swiftFlag = 85 - 8 * temp;
+            }
+            else
+            {
+                var temp = Math.Pow(swingTemp, 2);
+                swiftFlag = 85 + 4 * temp;
+            }
+            swiftFlag = UsefulMethods.OutGoodNumber(swiftFlag, 100, 5);
+            return swiftFlag;
         }
     }
 }

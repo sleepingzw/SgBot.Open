@@ -10,11 +10,86 @@ using SgBot.Open.DataTypes.StaticData;
 using SgBot.Open.Utils.Basic;
 using Manganese.Text;
 using System.Numerics;
+using Spectre.Console;
 
 namespace SgBot.Open.Utils.Extra
 {
     public static class GameImageMaker
     {
+        static int index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
+        // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
+        static SKTypeface skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
+        static SKFont skFont = new SKFont(skTypeface, 20);
+        static SKPaint skTextPaint = new SKPaint
+        {
+            Color = SKColors.Black,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 18,
+            IsAntialias = true
+        };
+        static SKPaint skSmallPaint = new SKPaint
+        {
+            Color = SKColors.Black,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 12,
+            IsAntialias = true
+        };
+        static SKPaint skBlackPaint = new SKPaint
+        {
+            Color = SKColors.Black,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 20,
+            IsAntialias = true
+        };
+        static SKPaint skBigBlackPaint = new SKPaint
+        {
+            Color = SKColors.Black,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 40,
+            IsAntialias = true
+        };
+        static SKPaint skRedPaint = new SKPaint
+        {
+            Color = SKColors.Red,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 20,
+            IsAntialias = true
+        };
+        static SKPaint skPurplePaint = new SKPaint
+        {
+            Color = SKColors.Purple,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 20,
+            IsAntialias = true
+        };
+        static SKPaint skBluePaint = new SKPaint
+        {
+            Color = SKColors.Blue,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 20,
+            IsAntialias = true
+        };
+        static SKPaint skOrangeRedPaint = new SKPaint
+            {
+                Color = SKColors.OrangeRed,
+                TextEncoding = SKTextEncoding.Utf8,
+                Typeface = skTypeface,
+                TextSize = 20,
+                IsAntialias = true
+            };
+
+        // static SKTypeface emojiTypeface = SKFontManager.Default.MatchCharacter(128274);
+        static int emojiint = SKFontManager.Default.FontFamilies.ToList().IndexOf("Symbola");
+        static SKTypeface emojiTypeface = SKFontManager.Default.GetFontStyles(emojiint).CreateTypeface(0);
+        static SKPaint skEmojiPaint = new SKPaint { Typeface = emojiTypeface, TextSize = 20 };
+
         /// <summary>
         /// 生产玩家信息
         /// </summary>
@@ -26,26 +101,7 @@ namespace SgBot.Open.Utils.Extra
             using (var surface = SKSurface.Create(skInfo))
             {
                 using var glCanvas = surface.Canvas;
-                var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
-                var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
-                // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
-                using var skFont = new SKFont(skTypeface, 20);
-                using var skTextPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 18,
-                    IsAntialias = true
-                };
-                using var skSmallPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 12,
-                    IsAntialias = true
-                };
+
                 glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
 
                 glCanvas.DrawText($"{player.Name}({player.Id}):", 3f, 25, skTextPaint);
@@ -61,6 +117,7 @@ namespace SgBot.Open.Utils.Extra
                 var onBody = new List<Equipment>();
                 foreach (var equip in player.Bag)
                 {
+                    // Console.WriteLine(equip.Name+equip.OnBody.ToString());
                     if (equip.OnBody)
                     {
                         onBody.Add(equip);
@@ -147,18 +204,7 @@ namespace SgBot.Open.Utils.Extra
             using (var surface = SKSurface.Create(skInfo))
             {
                 using var glCanvas = surface.Canvas;
-                var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
-                var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
-                // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
-                using var skFont = new SKFont(skTypeface, 30);
-                using var skTextPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 20,
-                    IsAntialias = true
-                };
+
                 glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
 
                 glCanvas.DrawText($"{player.Name}({player.Id}):进入傻狗大陆探险", 3f, 25, skTextPaint);
@@ -223,26 +269,9 @@ namespace SgBot.Open.Utils.Extra
             using (var surface = SKSurface.Create(skInfo))
             {
                 using var glCanvas = surface.Canvas;
-                var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
-                var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
-                // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
-                using var skFont = new SKFont(skTypeface, 30);
-                using var skTextPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 18,
-                    IsAntialias = true
-                };
-                using var skSmallPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 12,
-                    IsAntialias = true
-                };
+                var lockimg = SKBitmap.Decode(Path.Combine(StaticData.ExePath!, "Data/Img/GameRepository/lock.png"));
+                var strimg = SKBitmap.Decode(Path.Combine(StaticData.ExePath!, "Data/Img/GameRepository/str.png"));
+                // Console.WriteLine(lockimg.Width);
                 var lines = 1;
                 glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
                 glCanvas.DrawText($"{player.Name}({player.Id})", 3f, 25, skTextPaint);
@@ -254,26 +283,24 @@ namespace SgBot.Open.Utils.Extra
                     foreach (var equipment in player.Bag)
                     {
                         i++;
-                        if (equipment.OnBody)
+                        if (equipment.IsLock)
                         {
-                            glCanvas.DrawText(
-                                $"{i}".PadRight(2) + ":" + $"{equipment.Name}".PadRight(15) + $"Rk.{equipment.Level}" + " *装备中*", 3f,
-                                25 + lines * 20, skTextPaint);
-                            lines++;
-                            glCanvas.DrawText(
-                                $"  {equipment.Description}", 3f, 24 + lines * 20, skSmallPaint);
-                            lines++;
+                            // glCanvas.DrawText("🔒", 3f,25 + lines * 20, skOrangeRedPaint);
+                            glCanvas.DrawBitmap(lockimg, 0f, 4 + lines * 20);
                         }
-                        else
+                        if(equipment.OnBody)
                         {
-                            glCanvas.DrawText(
-                                $"{i}".PadRight(2) + ":" + $"{equipment.Name}".PadRight(15) + $"Rk.{equipment.Level}", 3f,
-                                25 + lines * 20, skTextPaint);
-                            lines++;
-                            glCanvas.DrawText(
-                                $"  {equipment.Description}", 3f, 24 + lines * 20, skSmallPaint);
-                            lines++;
+                            // glCanvas.DrawText("💪", 3f, 25 + lines * 20, skPurplePaint);
+                            glCanvas.DrawBitmap(strimg, 25f, 5 + lines * 20);
                         }
+                        glCanvas.DrawText(
+                            $"{i}".PadRight(2) + ":" + $"{equipment.Name}".PadRight(15) + $"Rk.{equipment.Level}", 50f,
+                            25 + lines * 20, skTextPaint);
+                        lines++;
+                        glCanvas.DrawText(
+                            $"  {equipment.Description}", 3f, 24 + lines * 20, skSmallPaint);
+                        lines++;
+
                         glCanvas.DrawText($"  {equipment.ShowLongEffect()}", 3f, 25 + lines * 20, skSmallPaint);
                         lines++;
                     }
@@ -311,50 +338,7 @@ namespace SgBot.Open.Utils.Extra
             using (var surface = SKSurface.Create(skInfo))
             {
                 using var glCanvas = surface.Canvas;
-                var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
-                var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
-                // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
-                using var skFont = new SKFont(skTypeface, 20);
-                using var skBlackPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 20,
-                    IsAntialias = true
-                };
-                using var skBigBlackPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 40,
-                    IsAntialias = true
-                };
-                using var skRedPaint = new SKPaint
-                {
-                    Color = SKColors.Red,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 20,
-                    IsAntialias = true
-                };
-                using var skPurplePaint = new SKPaint
-                {
-                    Color = SKColors.Purple,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 20,
-                    IsAntialias = true
-                };
-                using var skBluePaint = new SKPaint
-                {
-                    Color = SKColors.Blue,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 20,
-                    IsAntialias = true
-                };
+
                 glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
                 glCanvas.DrawText($"{log.PlayerName}({playerId})对阵{log.EnemyName}", 3f, 25, skBlackPaint);
                 var i = 0;
@@ -371,7 +355,7 @@ namespace SgBot.Open.Utils.Extra
                     {
                         if (!super[i / 10])
                         {
-                            glCanvas.DrawText($"{i / 10}阶狂暴模式开启", 470f, 25 + 20 * lines,
+                            glCanvas.DrawText($"{i / 10}阶狂暴模式开启", 480f, 25 + 20 * lines,
                                 skRedPaint);
                             super[i / 10] = true;
                             lines++;
@@ -505,32 +489,13 @@ namespace SgBot.Open.Utils.Extra
         /// <returns></returns>
         public static string MakeSgGameRankImage(List<string> list)
         {
-            var skInfo = new SKImageInfo(480, 55 + list.Count * 20);
+            var skInfo = new SKImageInfo(480, 55 + (list.Count * 20));
             using (var surface = SKSurface.Create(skInfo))
             {
                 using var glCanvas = surface.Canvas;
-                var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
-                var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
-                // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
-                using var skFont = new SKFont(skTypeface, 20);
-                using var skTextPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 18,
-                    IsAntialias = true
-                };
-                using var skBigPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 35,
-                    IsAntialias = true
-                };
+
                 glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
-                glCanvas.DrawText("~傻狗之巅~", 150f, 40, skBigPaint);
+                glCanvas.DrawText("~傻狗之巅~", 150f, 40, skBigBlackPaint);
                 var lines = 1;
                 foreach (var line in list)
                 {
@@ -554,33 +519,18 @@ namespace SgBot.Open.Utils.Extra
                 return ret;
             }
         }
-
+        /// <summary>
+        /// 生产其他人信息
+        /// </summary>
+        /// <param name="player"></param>
+        /// <returns></returns>
         public static string MakeOtherInfoImage(Player player)
         {
             var skInfo = new SKImageInfo(360, 190);
             using (var surface = SKSurface.Create(skInfo))
             {
                 using var glCanvas = surface.Canvas;
-                var index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
-                var skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
-                // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
-                using var skFont = new SKFont(skTypeface, 20);
-                using var skTextPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 18,
-                    IsAntialias = true
-                };
-                using var skSmallPaint = new SKPaint
-                {
-                    Color = SKColors.Black,
-                    TextEncoding = SKTextEncoding.Utf8,
-                    Typeface = skTypeface,
-                    TextSize = 12,
-                    IsAntialias = true
-                };
+
                 glCanvas.DrawColor(SKColors.White, SKBlendMode.Src);
 
                 glCanvas.DrawText($"{player.Name}({player.Id}):", 3f, 25, skTextPaint);

@@ -16,13 +16,15 @@ namespace SgBot.Open.DataTypes.SgGame
         public int Level { get; set; }
         public EquipmentEffect EquipmentEffect { get; set; }
         public bool OnBody { get; set; }
-        public Equipment(EquipmentCategory category, string name, string description, int level, bool onBody)
+        public bool IsLock { get; set; }
+        public Equipment(EquipmentCategory category, string name, string description, int level, bool onBody, bool isLock = false)
         {
             Category = category;
             Name = name;
             Description = description;
             Level = level;
             OnBody = onBody;
+            IsLock = isLock;
         }
 
         /// <summary>
@@ -95,6 +97,7 @@ namespace SgBot.Open.DataTypes.SgGame
         /// <returns></returns>
         public string ShowLongEffect()
         {
+            // Console.WriteLine(SlpzLibrary.DataOperator.ToJsonString(this));
             var ret = "";
             switch (Category)
             {
@@ -257,6 +260,7 @@ namespace SgBot.Open.DataTypes.SgGame
             return true;
 
         }
+        public int CompareTo(Equipment other) => Category.CompareTo(other.Category);
     }
     public class EquipmentEffect
     {

@@ -6,6 +6,7 @@ using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.Extra;
+using SgBot.Open.DataTypes.SgGame;
 using SgBot.Open.Utils.Basic;
 using SlpzLibrary;
 
@@ -131,6 +132,17 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
             targetPlayer.Power = 20;
             await DataBaseOperator.UpdatePlayer(targetPlayer);
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{targetPlayer.Id} REFRESH"));
+        }
+        [ChatCommand("查看战斗细节", "/checkbattledetail")]
+        public static async Task CheckBattleDetail (GroupMessageReceivedInfo groupReceiverInfo,
+            GroupMessageReceiver groupMessageReceiver)
+        {
+            if (!groupReceiverInfo.IsOwner) return;
+            var target = groupReceiverInfo.AtMessages[0].Target;
+            var targetPlayer = await DataBaseOperator.FindPlayer(target);
+            var unit = new BattleUnit(targetPlayer);
+
+            RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, $"{DataOperator.ToJsonString(unit)}"));
         }
     }
 }

@@ -39,7 +39,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Power--;
             var battle = new Battle();
             var enemy = DataBaseOperator.FindPlayerByRank(player.Rank, player.Id);
-            var log = battle.MakeBattle(player, enemy);
+            var log = Battle.MakeBattle(player, enemy);
             SgGamePvpResult result;
             if (log.IsWin)
             {
@@ -152,7 +152,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             player.Refresh();
             var battle = new Battle();
             var enemy = await DataBaseOperator.FindPlayer(target);
-            var log = battle.MakeBattle(player, enemy);
+            var log = Battle.MakeBattle(player, enemy);
             var result = new SgGamePvpResult()
             {
                 CoinGet = 0,

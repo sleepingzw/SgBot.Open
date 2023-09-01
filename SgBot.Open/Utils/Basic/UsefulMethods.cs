@@ -14,6 +14,25 @@ namespace SgBot.Open.Utils.Basic
             var rr = new Random().Next() % list.Count;
             return list[rr];
         }
+        /// <summary>
+        /// 使值在区间内
+        /// </summary>
+        /// <param name="what"></param>
+        /// <param name="max"></param>
+        /// <param name="min"></param>
+        /// <returns></returns>
+        public static double OutGoodNumber(double what, double max, double min)
+        {
+            if (what > max)
+            {
+                return max;
+            }
+            if (what < min)
+            {
+                return min;
+            }
+            return what;
+        }
         public static async Task Fresh(GroupInfo groupInfo)
         {
             var changed = false;

@@ -39,6 +39,13 @@ namespace SgBot.Open.Responders
                         await receiver.SendMessageAsync($"{id} did not exist");
                     }
                     break;
+                case "回复传话":
+                    var group = ll[1];
+                    var who= ll[2];
+                    var what= ll[3];
+                    var msg = new MessageChainBuilder().At(who).Plain($" {what}\n(本消息来自管理员传话)").Build();
+                    await MessageManager.SendGroupMessageAsync(group, msg);
+                    break;
                 case "改变群黑名单":
                     var gid = ll[1];
                     var g = await DataBaseOperator.FindGroup(gid);

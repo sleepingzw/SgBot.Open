@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -143,41 +144,43 @@ namespace SgBot.Open.DataTypes.SgGame
             CriticalDamageBattle = CriticalDamageOrigin;
             SwiftBattle = SwiftOrigin;
         }
+
+        public void ActiveBuff()
+        {
+            foreach (var buff in Buffs)
+            {
+                BattleSpeed *= (1 + buff.Value.BattleSpeed);
+                PhysicalAtkBattle *= (1 + buff.Value.PhysicalAtkBattle);
+                MagicAtkBattle *= (1 + buff.Value.MagicAtkBattle);
+                PhysicalDefBattle *= (1 + buff.Value.PhysicalDefBattle);
+                MagicDefBattle *= (1 + buff.Value.MagicDefBattle);
+                CriticalProbabilityBattle *= (1 + buff.Value.CriticalProbabilityBattle);
+                CriticalDamageBattle *= (1 + buff.Value.CriticalDamageBattle);
+                SwiftBattle *= (1 + buff.Value.SwiftBattle);
+                SkillActiveProbability *= (1 + buff.Value.SkillActiveProbability);
+            }
+        }
     }
 
     public class Buff
     {
-        public double BattleSpeed;
+        public double BattleSpeed = 0;
 
-        public double PhysicalAtkBattle;
+        public double PhysicalAtkBattle = 0;
 
-        public double MagicAtkBattle;
+        public double MagicAtkBattle = 0;
 
-        public double PhysicalDefBattle;
+        public double PhysicalDefBattle = 0;
 
-        public double MagicDefBattle;
+        public double MagicDefBattle = 0;
 
-        public double CriticalProbabilityBattle;
+        public double CriticalProbabilityBattle = 0;
 
-        public double CriticalDamageBattle;
+        public double CriticalDamageBattle = 0;
 
-        public double SwiftBattle;
+        public double SwiftBattle = 0;
 
-        public double SkillActiveProbability;
+        public double SkillActiveProbability = 0;
 
-        //public Buff(double battleSpeed, double physicalAtkBattle, double magicAtkBattle, double physicalDefBattle,
-        //    double magicDefBattle, double criticalProbabilityBattle, double criticalDamageBattle, double swiftBattle,
-        //    double skillActiveProbability)
-        //{
-        //    BattleSpeed = battleSpeed;
-        //    PhysicalAtkBattle = physicalAtkBattle;
-        //    MagicAtkBattle = magicAtkBattle;
-        //    PhysicalDefBattle = physicalDefBattle;
-        //    MagicDefBattle = magicDefBattle;
-        //    CriticalProbabilityBattle = criticalProbabilityBattle;
-        //    CriticalDamageBattle = criticalDamageBattle;
-        //    SwiftBattle = swiftBattle;
-        //    SkillActiveProbability = skillActiveProbability;
-        //}
     }
 }

@@ -174,8 +174,9 @@ namespace SgBot.Open.Responders.Commands.GameCommands
             if (GroupMessageReceivedInfo.PlainMessages[1] == "all")
             {
                 var tempList = player.OutLock();
+                // Logger.Log(DataOperator.ToJsonString(tempList));
                 player.Bag.Clear();
-                player.Bag = tempList;
+                player.Bag.AddRange(tempList);
                 await DataBaseOperator.UpdatePlayer(player);
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "已丢弃所有非装备非锁定物品", true));
                 return;

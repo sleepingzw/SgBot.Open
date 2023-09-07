@@ -16,6 +16,7 @@ namespace SgBot.Open.Utils.Extra
 {
     public static class GameImageMaker
     {
+        #region 笔刷初始化
         static int index = SKFontManager.Default.FontFamilies.ToList().IndexOf("宋体"); // 创建宋体字形
         // using var skTypeface = SKTypeface.FromFile("C:\\AlisaBot\\Fonts\\华康少女文字W5.ttf", 0);
         static SKTypeface skTypeface = SKFontManager.Default.GetFontStyles(index).CreateTypeface(0);
@@ -77,19 +78,14 @@ namespace SgBot.Open.Utils.Extra
             IsAntialias = true
         };
         static SKPaint skOrangeRedPaint = new SKPaint
-            {
-                Color = SKColors.OrangeRed,
-                TextEncoding = SKTextEncoding.Utf8,
-                Typeface = skTypeface,
-                TextSize = 20,
-                IsAntialias = true
-            };
-
-        // static SKTypeface emojiTypeface = SKFontManager.Default.MatchCharacter(128274);
-        static int emojiint = SKFontManager.Default.FontFamilies.ToList().IndexOf("Symbola");
-        static SKTypeface emojiTypeface = SKFontManager.Default.GetFontStyles(emojiint).CreateTypeface(0);
-        static SKPaint skEmojiPaint = new SKPaint { Typeface = emojiTypeface, TextSize = 20 };
-
+        {
+            Color = SKColors.OrangeRed,
+            TextEncoding = SKTextEncoding.Utf8,
+            Typeface = skTypeface,
+            TextSize = 20,
+            IsAntialias = true
+        };
+        #endregion
         /// <summary>
         /// 生产玩家信息
         /// </summary>
@@ -117,7 +113,6 @@ namespace SgBot.Open.Utils.Extra
                 var onBody = new List<Equipment>();
                 foreach (var equip in player.Bag)
                 {
-                    // Console.WriteLine(equip.Name+equip.OnBody.ToString());
                     if (equip.OnBody)
                     {
                         onBody.Add(equip);
@@ -168,8 +163,8 @@ namespace SgBot.Open.Utils.Extra
                 glCanvas.DrawText($"背包内有 {player.Bag.Count} 件装备 (输入 /game.bag 查看)", 3f, 265, skTextPaint);
                 if (player.SkillActive.Count != 0)
                 {
-                    glCanvas.DrawText($"当前技能:{SkillLibrary.Skills[player.SkillActive[0]].Name}", 3f,
-                        285, skTextPaint);
+                    glCanvas.DrawText($"当前技能:{SkillLibrary.Skills[player.SkillActive.First().Key].Name} " +
+                        $"等级：{player.SkillActive.First().Value}", 3f, 285, skTextPaint);
                 }
                 else
                 {

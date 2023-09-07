@@ -10,7 +10,6 @@ namespace SgBot.Open.DataTypes.SgGame
 {
     public class Battle
     {
-        private const int DefaultSwift = 75;
         private const int DefaultCrit = 10;
         public static BattleLog MakeBattle(Player playerp, Player enemyp)
         {
@@ -24,6 +23,7 @@ namespace SgBot.Open.DataTypes.SgGame
 
             string fname, sname;
             var isPlayerFast = true;
+
             if (player.BattleSpeed >= enemy.BattleSpeed)
             {
                 fastUnit = player;
@@ -39,14 +39,22 @@ namespace SgBot.Open.DataTypes.SgGame
                 fname = enemyp.Name;
                 isPlayerFast = false;
             }
-            var speed = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
-            var speedFlag = speed;
+
+            double speed;
+            double speedFlag;
             var round = 1;
             while (fastUnit.Hp > 0 && slowUnit.Hp > 0)
             {
 
                 fastUnit.Refresh();
                 slowUnit.Refresh();
+
+                //buff 生效
+                fastUnit.ActiveBuff();
+                slowUnit.ActiveBuff();
+
+                speed = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
+                speedFlag = speed;
 
                 #region 狂暴模式
                 var times = 1 + (int)((round - 1) / 10);
@@ -71,10 +79,10 @@ namespace SgBot.Open.DataTypes.SgGame
                     //主动技能启动
                     foreach (var skill in fastUnit.Skills)
                     {
-                        if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
-                        if (whatSkill.ActiveSkill(value, ref fastUnit, ref slowUnit, 1, Skill.SkillTypeEnum.Active))
+                        if (!SkillLibrary.Skills.TryGetValue(skill.Key, out var whatSkill)) continue;
+                        if (whatSkill.ActiveSkill(value, ref fastUnit, ref slowUnit, skill.Value, Skill.SkillTypeEnum.Active))
                         {
-                            postiveSkillActiveLog += $"{whatSkill.Name} 发动! {fname}{whatSkill.Action}";
+                            postiveSkillActiveLog += $"({fname}){whatSkill.Name} 发动! {fname}{whatSkill.Action}";
                             break;
                         }
                     }
@@ -82,7 +90,7 @@ namespace SgBot.Open.DataTypes.SgGame
                     var critTemp = fastUnit.CriticalProbabilityBattle - slowUnit.CriticalProbabilityBattle;
 
                     // 命中率
-                    double swiftFlag = OutHitPossibility(100 + fastUnit.SwiftBattle, 100 + slowUnit.SwiftBattle);                
+                    double swiftFlag = OutHitPossibility(fastUnit.SwiftBattle, slowUnit.SwiftBattle);                
 
                     #region 暴击处理
                     if (critTemp <= 0)
@@ -152,8 +160,26 @@ namespace SgBot.Open.DataTypes.SgGame
                             fastUnit.Shield = fastUnit.MaxShield;
                         }
                     }
-                    //被动技能生效
-                    //fastUnit.Skills
+                    //攻击方被动技能生效
+                    foreach (var skill in fastUnit.Skills)
+                    {
+                        if (!SkillLibrary.Skills.TryGetValue(skill.Key, out var whatSkill)) continue;
+                        if (whatSkill.ActiveSkill(100, ref fastUnit, ref slowUnit, skill.Value, Skill.SkillTypeEnum.Passive))
+                        {
+                            postiveSkillActiveLog += $"({fname}){whatSkill.Name} 发动! {fname}{whatSkill.Action}";
+                            break;
+                        }
+                    }
+                    //防御方被动技能生效
+                    foreach (var skill in slowUnit.Skills)
+                    {
+                        if (!SkillLibrary.Skills.TryGetValue(skill.Key, out var whatSkill)) continue;
+                        if (whatSkill.ActiveSkill(100, ref slowUnit, ref fastUnit, skill.Value, Skill.SkillTypeEnum.Passive,false))
+                        {
+                            postiveSkillActiveLog += $"({sname}){whatSkill.Name} 发动! {fname}{whatSkill.Action}";
+                            break;
+                        }
+                    }
 
                     isPlayerAttack = isPlayerFast;
 
@@ -167,10 +193,10 @@ namespace SgBot.Open.DataTypes.SgGame
 
                     foreach (var skill in slowUnit.Skills)
                     {
-                        if (!SkillLibrary.Skills.TryGetValue(skill, out var whatSkill)) continue;
-                        if (whatSkill.ActiveSkill(value, ref slowUnit, ref fastUnit, 1, Skill.SkillTypeEnum.Active))
+                        if (!SkillLibrary.Skills.TryGetValue(skill.Key, out var whatSkill)) continue;
+                        if (whatSkill.ActiveSkill(value, ref slowUnit, ref fastUnit, skill.Value, Skill.SkillTypeEnum.Active))
                         {
-                            postiveSkillActiveLog += $"{whatSkill.Name} 发动! {sname}{whatSkill.Action}";
+                            postiveSkillActiveLog += $"({sname}){whatSkill.Name} 发动! {sname}{whatSkill.Action}";
                             break;
                         }
                     }
@@ -178,7 +204,7 @@ namespace SgBot.Open.DataTypes.SgGame
                     var critTemp = slowUnit.CriticalProbabilityBattle - fastUnit.CriticalProbabilityBattle;
 
                     //命中率
-                    double swiftFlag = OutHitPossibility(100 + slowUnit.SwiftBattle, 100 + fastUnit.SwiftBattle);
+                    double swiftFlag = OutHitPossibility(slowUnit.SwiftBattle, fastUnit.SwiftBattle);
 
                     swiftFlag = UsefulMethods.OutGoodNumber(swiftFlag, 100, 5);
                     #region 暴击处理
@@ -248,8 +274,29 @@ namespace SgBot.Open.DataTypes.SgGame
                             slowUnit.Shield = slowUnit.MaxShield;
                         }
                     }
+                    //攻击方被动技能生效
+                    foreach (var skill in slowUnit.Skills)
+                    {
+                        if (!SkillLibrary.Skills.TryGetValue(skill.Key, out var whatSkill)) continue;
+                        if (whatSkill.ActiveSkill(100, ref slowUnit, ref fastUnit, skill.Value, Skill.SkillTypeEnum.Passive))
+                        {
+                            postiveSkillActiveLog += $"({sname}){whatSkill.Name} 发动! {fname}{whatSkill.Action}";
+                            break;
+                        }
+                    }
+                    //防御方被动技能生效
+                    foreach (var skill in fastUnit.Skills)
+                    {
+                        if (!SkillLibrary.Skills.TryGetValue(skill.Key, out var whatSkill)) continue;
+                        if (whatSkill.ActiveSkill(100, ref fastUnit, ref slowUnit, skill.Value, Skill.SkillTypeEnum.Passive, false))
+                        {
+                            postiveSkillActiveLog += $"({fname}){whatSkill.Name} 发动! {fname}{whatSkill.Action}";
+                            break;
+                        }
+                    }
+
                     isPlayerAttack = !isPlayerFast;
-                    //被动技能生效
+
                 }
                 //写入detail
 
@@ -286,7 +333,8 @@ namespace SgBot.Open.DataTypes.SgGame
 
         static double OutHitPossibility(double attackSwift,double defenseSwift)
         {
-            double swingTemp = attackSwift / defenseSwift;
+            var baseSwift = 114;
+            double swingTemp = (baseSwift + attackSwift) / (baseSwift + defenseSwift);
             // 命中率
             double swiftFlag;
             if (swingTemp < 1)

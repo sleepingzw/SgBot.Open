@@ -471,7 +471,7 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                 {
                     PhysicalDefBonus = 0.2,
                     MagicDefBonus = -0.1,
-                    SwiftBonus = 1
+                    SwiftBonus = 0.8
                 }
             };
             ArmorList[2].Add(armor2_8);
@@ -487,13 +487,12 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             };
             ArmorList[2].Add(armor2_9);
             // jewelry2
-            JewelryList[1].Add(jewelry1_1);
             var jewelry2_1 = new Equipment(EquipmentCategory.Jewelry, "精良的防御挂坠", "闪着亮光", 1, false)
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    PhysicalDefBonus = 0.14,
-                    MagicDefBonus = 0.24
+                    PhysicalDefBonus = 0.24,
+                    MagicDefBonus = 0.36
                 }
             };
             JewelryList[2].Add(jewelry2_1);
@@ -501,8 +500,8 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    MagicAtkBonus = 0.24,
-                    PhysicalAtkBonus = 0.14
+                    MagicAtkBonus = 0.36,
+                    PhysicalAtkBonus = 0.24
                 }
             };
             JewelryList[2].Add(jewelry2_2);
@@ -510,8 +509,8 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    MaxHpBonus = 0.24,
-                    MaxShieldBonus = 0.14
+                    MaxHpBonus = 0.36,
+                    MaxShieldBonus = 0.24
                 }
             };
             JewelryList[2].Add(jewelry2_3);
@@ -519,8 +518,8 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    SwiftBonus = 0.14,
-                    SpeedBonus = 0.24
+                    SwiftBonus = 0.24,
+                    SpeedBonus = 0.36
                 }
             };
             JewelryList[2].Add(jewelry2_4);
@@ -528,8 +527,8 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
             {
                 EquipmentEffect = new EquipmentEffect()
                 {
-                    CriticalProbabilityBonus = 0.24,
-                    CriticalDamageBonus = 0.14
+                    CriticalProbabilityBonus = 0.36,
+                    CriticalDamageBonus = 0.24
                 }
             };
             JewelryList[2].Add(jewelry2_5);
@@ -592,6 +591,51 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                 }
             };
             JewelryList[3].Add(jewelry3_1);
+            var jewelry3_2 = new Equipment(EquipmentCategory.Jewelry, "优秀的防御挂坠", "闪着亮光,给人安心的感觉", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    PhysicalDefBonus = 0.24,
+                    MagicDefBonus = 0.48
+                }
+            };
+            JewelryList[3].Add(jewelry3_2);
+            var jewelry3_3 = new Equipment(EquipmentCategory.Jewelry, "优秀的攻击挂坠", "闪着亮光,给人安心的感觉", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    MagicAtkBonus = 0.48,
+                    PhysicalAtkBonus = 0.24
+                }
+            };
+            JewelryList[3].Add(jewelry3_3);
+            var jewelry3_4 = new Equipment(EquipmentCategory.Jewelry, "优秀的生存挂坠", "闪着亮光,给人安心的感觉", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    MaxHpBonus = 0.48,
+                    MaxShieldBonus = 0.24
+                }
+            };
+            JewelryList[3].Add(jewelry3_4);
+            var jewelry3_5= new Equipment(EquipmentCategory.Jewelry, "优秀的迅捷挂坠", "闪着亮光,给人安心的感觉", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    SwiftBonus = 0.24,
+                    SpeedBonus = 0.48
+                }
+            };
+            JewelryList[3].Add(jewelry3_5);
+            var jewelry3_6 = new Equipment(EquipmentCategory.Jewelry, "优秀的幸运挂坠", "闪着亮光,给人安心的感觉", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    CriticalProbabilityBonus = 0.48,
+                    CriticalDamageBonus = 0.24
+                }
+            };
+            JewelryList[3].Add(jewelry3_6);
             #endregion
 
             #region 4级道具
@@ -615,7 +659,7 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                     PhysicalAtkBonus = -0.6,
                     MagicAtkBonus = 0.8,
                     SpeedBonus = 2,
-                    SwiftBonus = 2,
+                    SwiftBonus = -0.2,
                     CriticalDamageBonus = 4,
                     CriticalProbabilityBonus = 1
                 }
@@ -627,8 +671,8 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                 {
                     PhysicalAtkBonus = 1.6,
                     MagicAtkBonus = 0.1,
-                    SpeedBonus = -0.3,
-                    SwiftBonus = -0.3,
+                    SpeedBonus = 0.2,
+                    SwiftBonus = -0.2,
                     CriticalDamageBonus = 2,
                     CriticalProbabilityBonus = 2
                 }
@@ -661,6 +705,51 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                 }
             };
             JewelryList[4].Add(jewelry4_1);
+            var jewelry4_2 = new Equipment(EquipmentCategory.Jewelry, "传奇的防御挂坠", "闪着R!G!B!", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    PhysicalDefBonus = 1.2,
+                    MagicDefBonus = 1.6
+                }
+            };
+            JewelryList[4].Add(jewelry4_2);
+            var jewelry4_3 = new Equipment(EquipmentCategory.Jewelry, "传奇的攻击挂坠", "闪着R!G!B!", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    MagicAtkBonus = 1.6,
+                    PhysicalAtkBonus = 1.2
+                }
+            };
+            JewelryList[4].Add(jewelry4_3);
+            var jewelry4_4 = new Equipment(EquipmentCategory.Jewelry, "传奇的生存挂坠", "闪着R!G!B!", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    MaxHpBonus = 1.6,
+                    MaxShieldBonus = 1.2
+                }
+            };
+            JewelryList[4].Add(jewelry4_4);
+            var jewelry4_5 = new Equipment(EquipmentCategory.Jewelry, "传奇的迅捷挂坠", "闪着R!G!B!", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    SwiftBonus = 1.6,
+                    SpeedBonus = 1.2
+                }
+            };
+            JewelryList[4].Add(jewelry4_5);
+            var jewelry4_6 = new Equipment(EquipmentCategory.Jewelry, "传奇的幸运挂坠", "闪着R!G!B!", 1, false)
+            {
+                EquipmentEffect = new EquipmentEffect()
+                {
+                    CriticalProbabilityBonus = 1.6,
+                    CriticalDamageBonus = 1.2
+                }
+            };
+            JewelryList[4].Add(jewelry4_6);
             #endregion
 
             #region 5级道具
@@ -713,7 +802,7 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
                     MagicAtkBonus = 5.14,
                     MagicDefBonus = 5.14,
                     SpeedBonus = 2,
-                    SwiftBonus = 19.1,
+                    SwiftBonus = 1.91,
                     MaxHpBonus = 4,
                     MaxShieldBonus = 4
                 }

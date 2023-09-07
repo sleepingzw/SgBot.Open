@@ -35,9 +35,9 @@ namespace SgBot.Open.DataTypes.SgGame
         public string SkillHaveString { get; set; }
         public string SkillActiveString { get; set; }
         [NotMapped]
-        public List<int> SkillHave { get; set; }
+        public Dictionary<int,int> SkillHave { get; set; }
         [NotMapped]
-        public List<int> SkillActive { get; set; }
+        public Dictionary<int, int> SkillActive { get; set; }
         [NotMapped]
         public List<Equipment> Bag { get; set; }
         [NotMapped]
@@ -58,8 +58,8 @@ namespace SgBot.Open.DataTypes.SgGame
             Fitness = 1;
             FreePoints = 0;
             Bag = new List<Equipment>();
-            SkillActive = new List<int>();
-            SkillHave = new List<int>();
+            SkillActive = new Dictionary<int, int>();
+            SkillHave = new Dictionary<int, int>();
             Rank = Rank.D;
             RankScore = 0;
             IsHitBoss = false;
@@ -306,89 +306,71 @@ namespace SgBot.Open.DataTypes.SgGame
             temp.AddRange(notLock);
 
             Bag=temp;
-
-            //var temp = new List<Equipment>();
-            //foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Weapon))
-            //{
-            //    temp.Add(b);
-            //    Bag.Remove(b);
-            //    break;
-            //}
-            //foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Armor))
-            //{
-            //    temp.Add(b);
-            //    Bag.Remove(b);
-            //    break;
-            //}
-            //foreach (var b in Bag.Where(b => b.OnBody == true && b.Category == EquipmentCategory.Jewelry))
-            //{
-            //    temp.Add(b);
-            //    Bag.Remove(b);
-            //    break;
-            //}
-            //var tt = new List<Equipment>();
-            //tt.AddRange(Bag);
-            //var locked = new List<Equipment>();
-            //foreach (var b in tt.Where(b => b.IsLock == true))
-            //{                
-            //    Bag.Remove(b);
-            //}
-            //temp.AddRange(Bag);
-            //Bag = temp;
         }
 
         public List<Equipment> OutLock()
         {
-            if(Bag.Count == 0)
+            var temp= new List<Equipment>();
+            if (Bag.Count == 0)
             {
-                return new List<Equipment>();
+                return temp;
             }
             
             var tt = Bag.GroupBy(x => x.OnBody).OrderByDescending(k => k.Key).ToList();
             if(tt.Count == 1)
             {
+                //只有穿身上的
                 if (tt[0].First().OnBody)
                 {
-                    return Bag;
+                    temp.AddRange(Bag);
+                    return temp;
                 }
                 else
                 {
                     var tt2 = tt[0].GroupBy(x => x.IsLock).OrderByDescending(k => k.Key).ToList();
                     if(tt2.Count==1)
                     {
+                        //只有锁着的
                         if (tt2[0].First().IsLock)
                         {
-                            return Bag;
+                            temp.AddRange(Bag);
+                            return temp;
                         }
+                        //只有没锁的
                         else
                         {
-                            return new List<Equipment>();
+                            return temp;
                         }
                     }
                     else
                     {
-                        return tt2[0].ToList();
+                        //返回锁着的
+                        temp.AddRange(tt2[0]);
+                        return temp;
                     }
                 }
             }
             else
             {
+                //先取身上的
                 var onBody = tt[0].OrderBy(o => o.Category);
                 var tt2 = tt[1].GroupBy(x => x.IsLock).OrderByDescending(k => k.Key).ToList();
                 if (tt2.Count == 1)
                 {
+                    //除了穿着的只有锁着的
                     if (tt2[0].First().IsLock)
                     {
-                        return Bag;
+                        temp.AddRange(Bag);
+                        return temp;
                     }
                     else
                     {
-                        return onBody.ToList();
+                        temp.AddRange(onBody);
+                        return temp;
                     }
                 }
                 else
                 {
-                    var temp=new List<Equipment>();
                     temp.AddRange(onBody);
                     temp.AddRange(tt2[0]);
                     return temp;

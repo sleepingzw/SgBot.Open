@@ -13,15 +13,16 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
 
         static SkillLibrary()
         {
-            Skills.Add(0,new GodAttack());
-            //Skills.Add(1, new HealMyself());
+            Skills.Add(-1, new GMPower());
+            Skills.Add(0,new GodAttack());            
+            Skills.Add(3, new HotBlood());
             //Skills.Add(2, new TrueDamage());
         }
     }
 
     public abstract class Skill
     {
-        protected Skill(string name, string description,string effect, string action, SkillTypeEnum skillType = SkillTypeEnum.Active)
+        protected Skill(string name, string description, string effect, string action, SkillTypeEnum skillType = SkillTypeEnum.Active)
         {
             Name = name;
             Description = description;
@@ -35,7 +36,8 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
         public string Effect { get; set; }
         public string Action { get; set; }
         public SkillTypeEnum SkillType { get; set; }
-        public abstract bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit,int skillLevel, SkillTypeEnum type);
+
+        public abstract bool ActiveSkill(double activePossibilty, ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type, bool isAttack = true);
 
         public enum SkillTypeEnum
         {
@@ -44,11 +46,38 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
 
         }
     }
+    // 宗师之力
+    public class GMPower : Skill
+    {
+        public override bool ActiveSkill(double activePossibilty, ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type, bool isAttack = true)
+        {
+            if (type != SkillType)
+            {
+                return false;
+            }
+            if (unit.Buffs.ContainsKey("GMPower"))
+            {
+                return false;
+            }
+            if (unit.Hp <= 0)
+            {
+                unit.Hp = unit.MaxHp;
+                unit.Buffs.Add("GMPower", new Buff()
+                {
+                    CriticalProbabilityBattle = 1,
+                    BattleSpeed = 1
+                });
+            }
+            Action = "宗师之力！";
+            return true;
+        }
+        public GMPower() : base("元初宗师之力", "作为最古老的宗师，一次死亡不能击倒你，反而会呼死你变得更加强大", "免疫一次死亡,满状态复活后暴击数值提高100%,速度提高100%", "", SkillTypeEnum.Passive) { }
+    }
     // 天地闪耀傻狗之星
     public class GodAttack : Skill
     {
 
-        public override bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
+        public override bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type, bool isAttack = true)
         {        
             if (type != SkillType)
             {
@@ -67,47 +96,33 @@ namespace SgBot.Open.DataTypes.SgGame.GameLibrary
 
     public class HotBlood : Skill
     {
-        public override bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
+        public HotBlood() : base("热血战魂", "心中的热血", "每次攻击后攻速增加9%", "", SkillTypeEnum.Passive) { }
+        public override bool ActiveSkill(double activePossibilty,ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type, bool isAttack = true)
         {
             if (type != SkillType)
             {
                 return false;
             }
-            //if (!UsefulMethods.IsOk(100, (int)activePossibilty))
-            //{
-            //    return false;
-            //}
-
+            if (!isAttack)
+            {
+                return false;
+            }
             if (unit.Buffs.ContainsKey(this.Name))
             {
-                unit.Buffs[this.Name].BattleSpeed += unit.SpeedOrigin * 0.09;
+                unit.Buffs[this.Name].BattleSpeed +=  0.09;
             }
             else
             {
                 var temp = new Buff()
                 {
-                    BattleSpeed = unit.SpeedOrigin * 0.09,
+                    BattleSpeed =  0.09,
                 };
                 unit.Buffs.Add(this.Name, temp);
             }
             return true;
-        }
-        public HotBlood() : base("热血战魂", "心中的热血", "每次攻击后攻速增加9%", "", SkillTypeEnum.Passive) { }
+        }        
     }
-    public class GMPower : Skill
-    {
-        public override bool ActiveSkill(double activePossibilty, ref BattleUnit unit, ref BattleUnit enemyUnit, int skillLevel, SkillTypeEnum type)
-        {
-            if (type != SkillType)
-            {
-                return false;
-            }
-            enemyUnit.Hp -= 114514;
-            Action = "热血！";
-            return true;
-        }
-        public GMPower() : base("元初宗师之力", "作为最古老的宗师，一次死亡不能击倒你，反而会呼死你变得更加强大", "免疫一次死亡,满状态复活后暴击数值提高100%,速度提高100%", "", SkillTypeEnum.Passive) { }
-    }
+    
     // 奶一口
     //public class HealMyself : Skill
     //{

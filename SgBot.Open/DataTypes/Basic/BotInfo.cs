@@ -8,7 +8,7 @@ namespace SgBot.Open.DataTypes.Basic
 {
     internal class BotInfo
     {
-        public string? Version;
-        public string? UpdateInfo;
+        public string? Version { get; set; }
+        public string? UpdateInfo { get; set; }
     }
 }

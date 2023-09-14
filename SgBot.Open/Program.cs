@@ -6,6 +6,7 @@ using Mirai.Net.Data.Messages;
 using Mirai.Net.Data.Messages.Receivers;
 using Mirai.Net.Data.Shared;
 using Mirai.Net.Sessions.Http.Managers;
+using Newtonsoft.Json;
 using SgBot.Open.DataTypes.BotFunction;
 using SgBot.Open.DataTypes.StaticData;
 using SgBot.Open.Responders;
@@ -29,29 +30,30 @@ if (args.Length != 0)
         }
         else if (args[1] == "update")
         {
-            //var db = new DataBaseContext();
-            //var players = db.Players.ToList();
-            //foreach (var p in players)
-            //{
-            //    var b = JsonConvert.DeserializeObject<List<EquipmentOld>>(p.BagString)!;
-            //    var bnew = new List<Equipment>();
-            //    foreach (var e in b)
-            //    {
-            //        if(e.OnBody)
-            //        {
-            //            // Console.WriteLine("body");
-            //        }
-            //        bnew.Add(new Equipment(e.Category, e.Name!, e.Description!, e.Level, e.OnBody)
-            //        {
-            //            EquipmentEffect = e.EquipmentEffect                        
-            //        });
-            //    }
-            //    var bstring = JsonConvert.SerializeObject(bnew);
-            //    p.BagString = bstring;
-            //    db.Players.Update(p);
-            //    await db.SaveChangesAsync();
-            //}
-            //Console.WriteLine("Update player data sucess");
+            var db = new DataBaseContext();
+            var players = db.Players.ToList();
+            foreach (var p in players)
+            {
+                //var sh = JsonConvert.DeserializeObject<List<int>>(p.SkillHaveString)!;
+                //var sa = JsonConvert.DeserializeObject<List<int>>(p.SkillActiveString)!;
+                //var shnew = new Dictionary<int, int>();
+                //var sanew = new Dictionary<int, int>();
+                //foreach (var s in sh)
+                //{
+                //    shnew.Add(s, 10);
+                //}
+                //foreach (var s in sa)
+                //{
+                //    sanew.Add(s, 10);
+                //}
+                //var shstring = JsonConvert.SerializeObject(shnew);
+                //var sastring = JsonConvert.SerializeObject(sanew);
+                //p.SkillHaveString = shstring;
+                //p.SkillActiveString = sastring;
+                //db.Players.Update(p);
+                //await db.SaveChangesAsync();
+            }
+            Console.WriteLine("Update player data sucess");
             Console.WriteLine("Nothing to update");
         }
         Console.WriteLine("Debug finish. Press any key to continue");

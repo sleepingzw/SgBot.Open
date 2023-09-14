@@ -47,7 +47,7 @@ namespace SgBot.Open.DataTypes.SgGame
         public double SwiftBattle;
 
         public double SkillActiveProbability;
-        public List<int> Skills;
+        public Dictionary<int, int> Skills;
         public Dictionary<string,Buff> Buffs;
 
         public BattleUnit(Player player)

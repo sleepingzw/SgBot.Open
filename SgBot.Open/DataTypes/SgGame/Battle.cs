@@ -40,8 +40,7 @@ namespace SgBot.Open.DataTypes.SgGame
                 isPlayerFast = false;
             }
 
-            double speed;
-            double speedFlag;
+            double speedFlag = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
             var round = 1;
             while (fastUnit.Hp > 0 && slowUnit.Hp > 0)
             {
@@ -53,8 +52,7 @@ namespace SgBot.Open.DataTypes.SgGame
                 fastUnit.ActiveBuff();
                 slowUnit.ActiveBuff();
 
-                speed = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
-                speedFlag = speed;
+                var speed = fastUnit.BattleSpeed / slowUnit.BattleSpeed;
 
                 #region 狂暴模式
                 var times = 1 + (int)((round - 1) / 10);

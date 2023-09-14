@@ -30,7 +30,7 @@ namespace SgBot.Open.Utils.Basic
                 ret = new GroupInfo(groupId);
                 db.Groups.Add(ret);
                 await db.SaveChangesAsync();
-                Logger.Log("收录新群聊信息\n" + DataOperator.ToJsonString(ret), LogLevel.Important);
+                Logger.Log("收录新群聊信息\n" + DataOperator.ToJsonString(ret, true), LogLevel.Important);
             }
             else
             {
@@ -53,7 +53,7 @@ namespace SgBot.Open.Utils.Basic
                 ret = new UserInfo(userId);
                 db.Users.Add(ret);
                 await db.SaveChangesAsync();
-                Logger.Log("收录新成员信息\n" + DataOperator.ToJsonString(ret), LogLevel.Important);
+                Logger.Log("收录新成员信息\n" + DataOperator.ToJsonString(ret, true), LogLevel.Important);
             }
             else
             {
@@ -83,7 +83,7 @@ namespace SgBot.Open.Utils.Basic
                 ret.MakeString();
                 db.Players.Add(ret);
                 await db.SaveChangesAsync();
-                Logger.Log("收录新玩家信息\n" + DataOperator.ToJsonString(ret), LogLevel.Important);
+                Logger.Log("收录新玩家信息\n" + DataOperator.ToJsonString(ret, true), LogLevel.Important);
             }
             else
             {
@@ -186,11 +186,12 @@ namespace SgBot.Open.Utils.Basic
                 {
                     if (long.Parse(item.Id) > 0)
                     {
+                        // Console.WriteLine(item.Id+" "+item.RankScore.ToString());
                         tt.Add(item);
                     }
                 }
-                tt.Sort();
-                playerList.AddRange(tt);
+                var tempp = tt.OrderByDescending(rs => rs.RankScore).ToList();
+                playerList.AddRange(tempp);
             }
             if (playerList.Count > 0)
             {

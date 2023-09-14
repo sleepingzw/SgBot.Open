@@ -8,20 +8,11 @@ namespace SgBot.Open.DataTypes.BotFunction
 {
     public class OwnerMessageInfo
     {
-        public string What;
-        public string Who;
-        public string Name;
-        public string GroupFrom;
-        public string GroupName;
-        public DateTime Time;
-        public OwnerMessageInfo(string what, string who, string name, string groupFrom, string groupName, DateTime time)
-        {
-            What = what;
-            Who = who;
-            Name = name;
-            GroupFrom = groupFrom;
-            GroupName = groupName;
-            Time = time;
-        }
+        public string? What { get; set; }
+        public string? Who { get; set; }
+        public string? Name { get; set; }
+        public string? GroupFrom { get; set; }
+        public string? GroupName { get; set; }
+        public DateTime Time { get; set; }
     }
 }

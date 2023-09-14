@@ -593,7 +593,7 @@ namespace SgBot.Open.Utils.Extra
 
                 glCanvas.DrawText(
                     player.SkillActive.Count != 0
-                        ? $"当前技能:{SkillLibrary.Skills[player.SkillActive[0]].Name}"
+                        ? $"当前技能:{SkillLibrary.Skills[player.SkillActive.First().Key].Name}"
                         : "当前技能:无技能", 3f,
                     165, skTextPaint);
 

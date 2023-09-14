@@ -64,7 +64,7 @@ namespace SgBot.Open.Responders.Commands.GameCommands
         /// <param name="groupMessageReceivedInfo"></param>
         /// <param name="groupMessageReceiver"></param>
         /// <returns></returns>
-        [ChatCommand(new string[] { "傻狗之巅" }, new string[] { "/game.rank", "/g.rank" }, true)]
+        [ChatCommand(new string[] { "傻狗之巅" }, new string[] { "/game.rank", "/g.rank" }, false)]
         public static async Task PrintRank(GroupMessageReceivedInfo groupMessageReceivedInfo,
             GroupMessageReceiver groupMessageReceiver)
         {

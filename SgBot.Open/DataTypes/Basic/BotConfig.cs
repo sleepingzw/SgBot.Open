@@ -8,10 +8,10 @@ namespace SgBot.Open.DataTypes.Basic
 {
     internal class BotConfig
     {
-        public string? BotQQ;
-        public string? OwnerQQ;
-        public string? VerifyKey;
-        public string? MahAddress;
-        public string? Ip;
+        public string? BotQQ { get; set; }
+        public string? OwnerQQ { get; set; }
+        public string? VerifyKey { get; set; }
+        public string? MahAddress { get; set; }
+        public string? Ip { get; set; }
     }
 }

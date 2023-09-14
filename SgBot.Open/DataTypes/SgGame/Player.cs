@@ -396,8 +396,8 @@ namespace SgBot.Open.DataTypes.SgGame
             Bag = JsonConvert.DeserializeObject<List<Equipment>>(BagString)!;
             // Console.WriteLine(Bag.Count);
             Title = JsonConvert.DeserializeObject<List<int>>(TitleString)!;
-            SkillHave = JsonConvert.DeserializeObject<List<int>>(SkillHaveString)!;
-            SkillActive = JsonConvert.DeserializeObject<List<int>>(SkillActiveString)!;
+            SkillHave = JsonConvert.DeserializeObject<Dictionary<int, int>>(SkillHaveString)!;
+            SkillActive = JsonConvert.DeserializeObject<Dictionary<int, int>>(SkillActiveString)!;
         }
         #region IComparable<Player>
         public int CompareTo(Player other) => RankScore.CompareTo(other.RankScore);

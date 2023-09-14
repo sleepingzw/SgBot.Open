@@ -1,4 +1,5 @@
 ﻿using Mirai.Net.Data.Messages.Receivers;
+using Mirai.Net.Data.Shared;
 using Mirai.Net.Sessions.Http.Managers;
 using Mirai.Net.Utils.Scaffolds;
 using SgBot.Open.DataTypes.BotFunction;
@@ -118,10 +119,16 @@ namespace SgBot.Open.Responders.Commands.GroupCommands
                 RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "没有找到传话内容", true));
                 return;
             }
-            var msg = new OwnerMessageInfo(groupMessageReceivedInfo.PlainMessages[1], groupMessageReceivedInfo.Member.UserId,
-                groupMessageReceivedInfo.Member.Nickname, groupMessageReceivedInfo.Group.GroupId, groupMessageReceivedInfo.Group.GroupName,
-                DateTime.Now);
-            var json = DataOperator.ToJsonString(msg);
+            var msg = new OwnerMessageInfo()
+            {
+                What = groupMessageReceivedInfo.PlainMessages[1],
+                Who = groupMessageReceivedInfo.Member.UserId,
+                Name = groupMessageReceivedInfo.Member.Nickname,
+                GroupFrom = groupMessageReceivedInfo.Group.GroupId,
+                GroupName = groupMessageReceivedInfo.Group.GroupName,
+                Time = DateTime.Now
+            };
+            var json = DataOperator.ToJsonString(msg, true);
             await MessageManager.SendFriendMessageAsync("2826241064", json);
             RespondQueue.AddGroupRespond(new GroupRespondInfo(groupMessageReceiver, "已传话(有建设性意见可以直接加用户反馈群442069136)", true));
             var commentAddress = Path.Combine(StaticData.ExePath!, $"Data/Comments/{DateTime.Now:yyyy-M-dd--HH-mm-ss}.json");

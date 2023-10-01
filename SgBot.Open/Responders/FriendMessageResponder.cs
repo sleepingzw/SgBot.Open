@@ -21,7 +21,10 @@ namespace SgBot.Open.Responders
             {
                 return;
             }
-
+            if(receiver.MessageChain.OfType<PlainMessage>().ToList().Count==0)
+            {
+                return;
+            }
             var cc = receiver.MessageChain.OfType<PlainMessage>().ToList()[0].Text;
             var ll= cc.Split(' ');
             switch (ll[0])

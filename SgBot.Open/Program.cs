@@ -75,6 +75,8 @@ Logger.Log($"登录Bot {StaticData.BotConfig.BotQQ} 成功",LogLevel.Important);
 
 // await MessageManager.SendFriendMessageAsync("2826241064", "bot已经登录");
 
+//test
+
 bot.MessageReceived.OfType<GroupMessageReceiver>().Subscribe(receiver=>
 {
     Task.Run(async () =>
